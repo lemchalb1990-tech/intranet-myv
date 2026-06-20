@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  SUPER_ADMIN
+  EXECUTIVE
+  CLIENT
+}
+
+enum DocumentStatus {
+  PENDING
+  UPLOADED
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  rut       String   @unique
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CLIENT)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client             Client?
+  assignedClients    Client[]   @relation("ExecutiveClients")
+  reviewedDocuments  Document[] @relation("DocumentReviewer")
+  requestedDocuments Document[] @relation("DocumentRequester")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone       String?
+  executiveId String?
+  executive   User?    @relation("ExecutiveClients", fields: [executiveId], references: [id])
+  projects    Project[]
+  documents   Document[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProjectStatus {
+  id        String    @id @default(cuid())
+  name      String
+  color     String    @default("#94a3b8")
+  order     Int       @default(0)
+  isDefault Boolean   @default(false)
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  type         String        @default("Departamento")
+  clientId     String
+  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  statusId     String
+  status       ProjectStatus @relation(fields: [statusId], references: [id])
+  deliveryDate DateTime?
+  notes        String?
+  documents    Document[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Document {
+  id            String         @id @default(cuid())
+  title         String
+  clientId      String
+  client        Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  projectId     String?
+  project       Project?       @relation(fields: [projectId], references: [id])
+  requestedById String
+  requestedBy   User           @relation("DocumentRequester", fields: [requestedById], references: [id])
+  requestNote   String?
+  fileName      String?
+  fileUrl       String?
+  fileType      String?
+  fileSize      Int?
+  status        DocumentStatus @default(PENDING)
+  reviewNote    String?
+  reviewedById  String?
+  reviewedBy    User?          @relation("DocumentReviewer", fields: [reviewedById], references: [id])
+  createdAt     DateTime       @default(now())
+  uploadedAt    DateTime?
+  reviewedAt    DateTime?
+  updatedAt     DateTime       @updatedAt
+}
+
+model Settings {
+  id             String   @id @default(cuid())
+  platformName   String   @default("Intranet MYV")
+  logoUrl        String?
+  primaryColor   String   @default("#475569")
+  accentColor    String   @default("#0f172a")
+  emailProvider  String   @default("smtp")
+  smtpHost       String?
+  smtpPort       Int?     @default(587)
+  smtpSecure     Boolean  @default(false)
+  smtpUser       String?
+  smtpPassword   String?
+  smtpFrom       String?
+  resendApiKey   String?
+  resendFrom     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
