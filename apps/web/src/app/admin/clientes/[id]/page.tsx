@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { formatRut } from "@/lib/rut";
+import { formatRut, getDefaultPassword } from "@/lib/rut";
 import Badge, { DocumentStatusBadge } from "@/components/ui/Badge";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -37,6 +37,7 @@ export default function ClientDetailPage() {
   const [tab, setTab] = useState<"proyectos" | "documentos">("proyectos");
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showDocModal, setShowDocModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [reviewDoc, setReviewDoc] = useState<ClientDetail["documents"][0] | null>(null);
 
   function load() {
@@ -119,6 +120,12 @@ export default function ClientDetailPage() {
           </div>
         </div>
         <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
+          <button
+            onClick={() => setShowEditModal(true)}
+            className="text-xs text-slate-600 hover:text-slate-800 transition px-3 py-1.5 rounded-lg hover:bg-slate-100"
+          >
+            Editar cliente
+          </button>
           <button
             onClick={handleDeleteClient}
             className="text-xs text-red-500 hover:text-red-700 transition px-3 py-1.5 rounded-lg hover:bg-red-50"
@@ -277,6 +284,140 @@ export default function ClientDetailPage() {
           onReview={handleReview}
         />
       )}
+
+      {showEditModal && (
+        <EditClientModal
+          client={client}
+          onClose={() => setShowEditModal(false)}
+          onUpdated={() => { setShowEditModal(false); load(); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function EditClientModal({
+  client,
+  onClose,
+  onUpdated,
+}: {
+  client: ClientDetail;
+  onClose: () => void;
+  onUpdated: () => void;
+}) {
+  const [form, setForm] = useState({
+    name: client.user.name,
+    email: client.user.email,
+    phone: client.phone ?? "",
+    rut: formatRut(client.user.rut),
+    executiveId: client.executive?.id ?? "",
+  });
+  const [executives, setExecutives] = useState<{ id: string; name: string }[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/executives")
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setExecutives(data); })
+      .catch(() => {});
+  }, []);
+
+  function handleRutChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.replace(/[^0-9kK]/g, "");
+    if (raw.length <= 9) {
+      setForm((f) => ({ ...f, rut: raw.length > 1 ? formatRut(raw) : raw }));
+    }
+  }
+
+  const defaultPassword = getDefaultPassword(form.rut);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/clients/${client.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone || null,
+          rut: form.rut,
+          executiveId: form.executiveId || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error); return; }
+      onUpdated();
+    } catch { setError("Error de conexión"); }
+    finally { setLoading(false); }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative bg-white rounded-xl border border-slate-200 shadow-lg w-full max-w-md">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <h2 className="font-semibold text-slate-800">Editar cliente</h2>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="px-5 py-4 space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Nombre completo</label>
+            <input type="text" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Teléfono (opcional)</label>
+            <input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">RUT</label>
+            <input type="text" placeholder="12.345.678-9" value={form.rut} onChange={handleRutChange} required className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Clave de acceso</label>
+            <div className="flex items-center gap-2">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={defaultPassword}
+                readOnly
+                className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-600 cursor-default focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="px-3 py-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 text-xs whitespace-nowrap"
+              >
+                {showPassword ? "Ocultar" : "Ver"}
+              </button>
+            </div>
+            <p className="text-xs text-slate-400 mt-1">Últimos 6 dígitos del RUT (sin dígito verificador)</p>
+          </div>
+          {executives.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Ejecutivo asignado</label>
+              <select value={form.executiveId} onChange={(e) => setForm((f) => ({ ...f, executiveId: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white">
+                <option value="">Sin asignar</option>
+                {executives.map((ex) => <option key={ex.id} value={ex.id}>{ex.name}</option>)}
+              </select>
+            </div>
+          )}
+          {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
+          <div className="flex gap-2 pt-1">
+            <button type="button" onClick={onClose} className="flex-1 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">Cancelar</button>
+            <button type="submit" disabled={loading} className="flex-1 py-2 bg-slate-800 text-white rounded-lg text-sm hover:bg-slate-700 disabled:opacity-60">{loading ? "Guardando..." : "Guardar cambios"}</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
