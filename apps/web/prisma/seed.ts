@@ -16,7 +16,7 @@ async function main() {
   const password = await bcrypt.hash("admin123", 12);
   await prisma.user.create({
     data: {
-      rut: "111111119",
+      rut: "111111111",
       name: "Super Administrador",
       email: "admin@intranet.cl",
       password,
@@ -41,7 +41,7 @@ async function main() {
   });
 
   console.log("✓ Seed completado");
-  console.log("  Admin RUT: 11.111.111-9");
+  console.log("  Admin RUT: 11.111.111-1");
   console.log("  Admin contraseña: admin123");
 }
 
