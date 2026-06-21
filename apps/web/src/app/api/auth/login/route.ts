@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { comparePassword, signToken } from "@/lib/auth";
 import { normalizeRut, validateRut } from "@/lib/rut";
-import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,8 +38,12 @@ export async function POST(req: NextRequest) {
 
     const token = signToken({ userId: user.id, role: user.role, rut: user.rut });
 
-    const cookieStore = await cookies();
-    cookieStore.set("auth_token", token, {
+    const response = NextResponse.json({
+      role: user.role,
+      name: user.name,
+    });
+
+    response.cookies.set("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -48,10 +51,7 @@ export async function POST(req: NextRequest) {
       path: "/",
     });
 
-    return NextResponse.json({
-      role: user.role,
-      name: user.name,
-    });
+    return response;
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Error del servidor" }, { status: 500 });
