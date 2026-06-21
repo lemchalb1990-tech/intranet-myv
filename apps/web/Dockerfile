@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma
 COPY prisma.config.ts ./
-RUN npm ci
+RUN npm install
 
 FROM node:20-alpine AS builder
 WORKDIR /app

@@ -3,7 +3,7 @@ import { verifyToken } from "@/lib/jwt";
 
 const PUBLIC_PATHS = ["/login", "/api/auth/login"];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get("auth_token")?.value;
-  const payload = token ? verifyToken(token) : null;
+  const payload = token ? await verifyToken(token) : null;
 
   if (!payload) {
     if (pathname.startsWith("/api/")) {
