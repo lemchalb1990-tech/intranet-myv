@@ -132,6 +132,16 @@ export async function sendDocumentReviewEmail(
   );
 }
 
+export async function sendStepNotificationEmail(
+  to: string,
+  subject: string,
+  body: string
+) {
+  const config = await getEmailConfig();
+  const platform = config?.platformName ?? "Intranet MYV";
+  await sendEmail(to, subject, baseTemplate(platform, `<p>${body.replace(/\n/g, "<br/>")}</p>`));
+}
+
 export async function sendStatusChangeEmail(
   to: string,
   name: string,

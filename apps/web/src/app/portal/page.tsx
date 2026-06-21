@@ -9,8 +9,14 @@ interface Project {
   id: string;
   name: string;
   type: string;
+  unitNumber: string | null;
+  hasStorage: boolean;
+  storageNumber: string | null;
+  hasParking: boolean;
+  parkingNumber: string | null;
   deliveryDate: string | null;
   status: { name: string; color: string };
+  proyecto: { name: string; inmobiliaria: { name: string } } | null;
 }
 
 export default function PortalPage() {
@@ -59,8 +65,22 @@ export default function PortalPage() {
             <div key={p.id} className="bg-white rounded-xl border border-slate-200 p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <p className="font-semibold text-slate-800">{p.name}</p>
-                  <p className="text-sm text-slate-500 mt-0.5">{p.type}</p>
+                  {p.proyecto && (
+                    <p className="text-xs text-slate-400 mb-1">{p.proyecto.inmobiliaria.name} · {p.proyecto.name}</p>
+                  )}
+                  <p className="font-semibold text-slate-800">
+                    {p.type === "Departamento" ? "Departamento" : p.type}
+                    {p.unitNumber && <span className="font-normal text-slate-600"> {p.unitNumber}</span>}
+                    {!p.unitNumber && !p.proyecto && <span className="font-normal"> {p.name}</span>}
+                  </p>
+                  <div className="flex gap-3 mt-1 flex-wrap">
+                    {p.hasStorage && p.storageNumber && (
+                      <span className="text-xs text-slate-500">Bodega {p.storageNumber}</span>
+                    )}
+                    {p.hasParking && p.parkingNumber && (
+                      <span className="text-xs text-slate-500">Estacionamiento {p.parkingNumber}</span>
+                    )}
+                  </div>
                 </div>
                 <Badge color={p.status.color} label={p.status.name} />
               </div>

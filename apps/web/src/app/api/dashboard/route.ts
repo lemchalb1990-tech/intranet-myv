@@ -19,7 +19,7 @@ export async function GET() {
   const [totalClients, totalProjects, pendingDocs, projectsByStatus] =
     await Promise.all([
       prisma.client.count({ where: clientWhere }),
-      prisma.project.count({ where: projectWhere }),
+      prisma.unidad.count({ where: projectWhere }),
       prisma.document.count({ where: documentWhere }),
       prisma.projectStatus.findMany({
         include: {

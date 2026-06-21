@@ -12,16 +12,18 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const body = await req.json();
-  const { name, color, order } = body;
+  const { name, type, address, deliveryDate, description } = await req.json();
 
-  const updated = await prisma.projectStatus.update({
+  const updated = await prisma.proyecto.update({
     where: { id },
     data: {
       name: name ?? undefined,
-      color: color ?? undefined,
-      order: order ?? undefined,
+      type: type ?? undefined,
+      address: address !== undefined ? address : undefined,
+      deliveryDate: deliveryDate !== undefined ? (deliveryDate ? new Date(deliveryDate) : null) : undefined,
+      description: description !== undefined ? description : undefined,
     },
+    include: { inmobiliaria: { select: { id: true, name: true } } },
   });
 
   return NextResponse.json(updated);
@@ -37,15 +39,6 @@ export async function DELETE(
   }
 
   const { id } = await params;
-
-  const projectCount = await prisma.unidad.count({ where: { statusId: id } });
-  if (projectCount > 0) {
-    return NextResponse.json(
-      { error: "No se puede eliminar un estado con proyectos asignados" },
-      { status: 409 }
-    );
-  }
-
-  await prisma.projectStatus.delete({ where: { id } });
+  await prisma.proyecto.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

@@ -3,6 +3,32 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { sendStatusChangeEmail } from "@/lib/email";
 
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getSession();
+  if (!session || session.role === "CLIENT") {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const unidad = await prisma.unidad.findUnique({
+    where: { id },
+    include: {
+      status: true,
+      proyecto: { include: { inmobiliaria: true } },
+      client: { include: { user: { select: { name: true, email: true } } } },
+    },
+  });
+
+  if (!unidad) {
+    return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+  }
+
+  return NextResponse.json(unidad);
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -17,7 +43,7 @@ export async function PATCH(
   const { name, type, statusId, deliveryDate, notes } = body;
 
   try {
-    const existing = await prisma.project.findUnique({
+    const existing = await prisma.unidad.findUnique({
       where: { id },
       include: { status: true, client: { include: { user: true } } },
     });
@@ -26,16 +52,24 @@ export async function PATCH(
       return NextResponse.json({ error: "Proyecto no encontrado" }, { status: 404 });
     }
 
-    const updated = await prisma.project.update({
+    const { proyectoId, unitNumber, hasStorage, storageNumber, hasParking, parkingNumber } = body;
+
+    const updated = await prisma.unidad.update({
       where: { id },
       data: {
         name: name ?? undefined,
         type: type ?? undefined,
         statusId: statusId ?? undefined,
+        proyectoId: proyectoId !== undefined ? proyectoId : undefined,
+        unitNumber: unitNumber !== undefined ? unitNumber : undefined,
+        hasStorage: hasStorage !== undefined ? hasStorage : undefined,
+        storageNumber: storageNumber !== undefined ? storageNumber : undefined,
+        hasParking: hasParking !== undefined ? hasParking : undefined,
+        parkingNumber: parkingNumber !== undefined ? parkingNumber : undefined,
         deliveryDate: deliveryDate ? new Date(deliveryDate) : undefined,
         notes: notes !== undefined ? notes : undefined,
       },
-      include: { status: true, client: { include: { user: true } } },
+      include: { status: true, proyecto: { include: { inmobiliaria: true } }, client: { include: { user: true } } },
     });
 
     if (statusId && statusId !== existing.statusId) {
@@ -68,6 +102,6 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  await prisma.project.delete({ where: { id } });
+  await prisma.unidad.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

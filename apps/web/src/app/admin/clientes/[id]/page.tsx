@@ -15,6 +15,9 @@ interface ClientDetail {
   phone: string | null;
   projects: {
     id: string; name: string; type: string; deliveryDate: string | null;
+    unitNumber: string | null; hasStorage: boolean; storageNumber: string | null;
+    hasParking: boolean; parkingNumber: string | null;
+    proyecto: { id: string; name: string; inmobiliaria: { name: string } } | null;
     status: { id: string; name: string; color: string };
   }[];
   documents: {
@@ -160,21 +163,31 @@ export default function ClientDetailPage() {
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Agregar proyecto
+              Agregar unidad
             </button>
           </div>
 
           {client.projects.length === 0 ? (
             <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400 text-sm">
-              Sin proyectos asignados
+              Sin unidades asignadas
             </div>
           ) : (
             <div className="space-y-2">
               {client.projects.map((p) => (
                 <div key={p.id} className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4">
                   <div className="flex-1">
-                    <p className="font-medium text-slate-800 text-sm">{p.name}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{p.type}{p.deliveryDate ? ` · Entrega: ${format(new Date(p.deliveryDate), "dd MMM yyyy", { locale: es })}` : ""}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-slate-800 text-sm">
+                        {p.proyecto ? p.proyecto.name : p.name}
+                        {p.unitNumber && <span className="text-slate-500 font-normal"> · {p.type === "Departamento" ? "Depto" : p.type} {p.unitNumber}</span>}
+                      </p>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {p.proyecto?.inmobiliaria.name ?? p.type}
+                      {p.hasStorage && p.storageNumber && ` · Bodega ${p.storageNumber}`}
+                      {p.hasParking && p.parkingNumber && ` · Est. ${p.parkingNumber}`}
+                      {p.deliveryDate ? ` · Entrega: ${format(new Date(p.deliveryDate), "dd MMM yyyy", { locale: es })}` : ""}
+                    </p>
                   </div>
                   <select
                     value={p.status.id}
@@ -186,6 +199,9 @@ export default function ClientDetailPage() {
                     ))}
                   </select>
                   <Badge color={p.status.color} label={p.status.name} />
+                  <Link href={`/admin/projects/${p.id}`} className="text-xs text-slate-500 hover:text-slate-700 px-2 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition whitespace-nowrap">
+                    Ver pasos
+                  </Link>
                 </div>
               ))}
             </div>
@@ -430,9 +446,25 @@ function NewProjectModal({
   onClose: () => void;
   onCreated: () => void;
 }) {
-  const [form, setForm] = useState({ name: "", type: "Departamento", statusId: statuses[0]?.id ?? "", deliveryDate: "", notes: "" });
+  const [form, setForm] = useState({
+    name: "", type: "Departamento", statusId: statuses[0]?.id ?? "",
+    deliveryDate: "", notes: "",
+    proyectoId: "", unitNumber: "",
+    hasStorage: false, storageNumber: "",
+    hasParking: false, parkingNumber: "",
+  });
+  const [proyectos, setProyectos] = useState<{ id: string; name: string; type: string; inmobiliaria: { name: string } }[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/proyectos")
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setProyectos(data); })
+      .catch(() => {});
+  }, []);
+
+  const isDepartamento = form.type === "Departamento";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -442,7 +474,20 @@ function NewProjectModal({
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, clientId, deliveryDate: form.deliveryDate || null }),
+        body: JSON.stringify({
+          name: form.proyectoId ? "" : form.name,
+          type: form.type,
+          clientId,
+          statusId: form.statusId,
+          proyectoId: form.proyectoId || null,
+          unitNumber: form.unitNumber || null,
+          hasStorage: form.hasStorage,
+          storageNumber: form.hasStorage ? (form.storageNumber || null) : null,
+          hasParking: form.hasParking,
+          parkingNumber: form.hasParking ? (form.parkingNumber || null) : null,
+          deliveryDate: form.deliveryDate || null,
+          notes: form.notes || null,
+        }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); return; }
@@ -454,24 +499,59 @@ function NewProjectModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="relative bg-white rounded-xl border border-slate-200 shadow-lg w-full max-w-md">
+      <div className="relative bg-white rounded-xl border border-slate-200 shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-800">Nuevo proyecto</h2>
+          <h2 className="font-semibold text-slate-800">Agregar unidad</h2>
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
         <form onSubmit={handleSubmit} className="px-5 py-4 space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Nombre del proyecto</label>
-            <input type="text" placeholder="Edificio Los Pinos, Dpto 302" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
-          </div>
+          {proyectos.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Proyecto (Inmobiliaria)</label>
+              <select value={form.proyectoId} onChange={(e) => setForm((f) => ({ ...f, proyectoId: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white">
+                <option value="">Sin proyecto asignado</option>
+                {proyectos.map((p) => (
+                  <option key={p.id} value={p.id}>{p.inmobiliaria.name} · {p.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          {!form.proyectoId && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
+              <input type="text" placeholder="Edificio Los Pinos" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required={!form.proyectoId} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Tipo</label>
-            <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white">
+            <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value, hasStorage: false, hasParking: false }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white">
               {["Departamento", "Casa", "Oficina", "Local Comercial", "Otro"].map((t) => <option key={t}>{t}</option>)}
             </select>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Número de {isDepartamento ? "departamento" : "unidad"}</label>
+            <input type="text" placeholder={isDepartamento ? "302" : "Casa B"} value={form.unitNumber} onChange={(e) => setForm((f) => ({ ...f, unitNumber: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+          </div>
+          {isDepartamento && (
+            <div className="border border-slate-200 rounded-lg p-3 space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" checked={form.hasStorage} onChange={(e) => setForm((f) => ({ ...f, hasStorage: e.target.checked }))} className="w-4 h-4 rounded accent-slate-700" />
+                <span className="text-sm font-medium text-slate-700">Incluye bodega</span>
+              </label>
+              {form.hasStorage && (
+                <input type="text" placeholder="Número de bodega" value={form.storageNumber} onChange={(e) => setForm((f) => ({ ...f, storageNumber: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+              )}
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" checked={form.hasParking} onChange={(e) => setForm((f) => ({ ...f, hasParking: e.target.checked }))} className="w-4 h-4 rounded accent-slate-700" />
+                <span className="text-sm font-medium text-slate-700">Incluye estacionamiento</span>
+              </label>
+              {form.hasParking && (
+                <input type="text" placeholder="Número de estacionamiento" value={form.parkingNumber} onChange={(e) => setForm((f) => ({ ...f, parkingNumber: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+              )}
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Estado inicial</label>
             <select value={form.statusId} onChange={(e) => setForm((f) => ({ ...f, statusId: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white">
@@ -483,13 +563,13 @@ function NewProjectModal({
             <input type="date" value={form.deliveryDate} onChange={(e) => setForm((f) => ({ ...f, deliveryDate: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Notas internas (no visible al cliente)</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Notas internas</label>
             <textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} rows={2} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 resize-none" />
           </div>
           {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
           <div className="flex gap-2 pt-1">
             <button type="button" onClick={onClose} className="flex-1 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">Cancelar</button>
-            <button type="submit" disabled={loading} className="flex-1 py-2 bg-slate-800 text-white rounded-lg text-sm hover:bg-slate-700 disabled:opacity-60">{loading ? "Guardando..." : "Crear proyecto"}</button>
+            <button type="submit" disabled={loading} className="flex-1 py-2 bg-slate-800 text-white rounded-lg text-sm hover:bg-slate-700 disabled:opacity-60">{loading ? "Guardando..." : "Agregar unidad"}</button>
           </div>
         </form>
       </div>

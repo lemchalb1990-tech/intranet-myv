@@ -35,45 +35,97 @@ model User {
   assignedClients    Client[]   @relation("ExecutiveClients")
   reviewedDocuments  Document[] @relation("DocumentReviewer")
   requestedDocuments Document[] @relation("DocumentRequester")
+  completedSteps     UnitStep[] @relation("StepCompletedBy")
 }
 
 model Client {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String     @id @default(cuid())
+  userId      String     @unique
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   phone       String?
   executiveId String?
-  executive   User?    @relation("ExecutiveClients", fields: [executiveId], references: [id])
-  projects    Project[]
+  executive   User?      @relation("ExecutiveClients", fields: [executiveId], references: [id])
+  projects    Unidad[]
   documents   Document[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Inmobiliaria {
+  id        String     @id @default(cuid())
+  name      String
+  rut       String?
+  address   String?
+  proyectos Proyecto[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Proyecto {
+  id             String       @id @default(cuid())
+  inmobiliariaId String
+  inmobiliaria   Inmobiliaria @relation(fields: [inmobiliariaId], references: [id], onDelete: Cascade)
+  name           String
+  type           String       @default("Departamento")
+  address        String?
+  deliveryDate   DateTime?
+  description    String?
+  unidades       Unidad[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model ProjectStatus {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  color     String    @default("#94a3b8")
-  order     Int       @default(0)
-  isDefault Boolean   @default(false)
-  projects  Project[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  color     String   @default("#94a3b8")
+  order     Int      @default(0)
+  isDefault Boolean  @default(false)
+  projects  Unidad[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Project {
-  id           String        @id @default(cuid())
-  name         String
-  type         String        @default("Departamento")
-  clientId     String
-  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  statusId     String
-  status       ProjectStatus @relation(fields: [statusId], references: [id])
-  deliveryDate DateTime?
-  notes        String?
-  documents    Document[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+model Unidad {
+  id            String        @id @default(cuid())
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  proyectoId    String?
+  proyecto      Proyecto?     @relation(fields: [proyectoId], references: [id])
+  unitNumber    String?
+  hasStorage    Boolean       @default(false)
+  storageNumber String?
+  hasParking    Boolean       @default(false)
+  parkingNumber String?
+  name          String
+  type          String        @default("Departamento")
+  statusId      String
+  status        ProjectStatus @relation(fields: [statusId], references: [id])
+  deliveryDate  DateTime?
+  notes         String?
+  documents     Document[]
+  steps         UnitStep[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("projects")
+}
+
+model UnitStep {
+  id             String     @id @default(cuid())
+  unidadId       String
+  unidad         Unidad     @relation(fields: [unidadId], references: [id], onDelete: Cascade)
+  order          Int        @default(0)
+  name           String
+  description    String?
+  notifyEnabled  Boolean    @default(false)
+  notifyTemplate String?
+  completedAt    DateTime?
+  completedById  String?
+  completedBy    User?      @relation("StepCompletedBy", fields: [completedById], references: [id])
+  documents      Document[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 }
 
 model Document {
@@ -82,7 +134,9 @@ model Document {
   clientId      String
   client        Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
   projectId     String?
-  project       Project?       @relation(fields: [projectId], references: [id])
+  project       Unidad?        @relation(fields: [projectId], references: [id])
+  stepId        String?
+  step          UnitStep?      @relation(fields: [stepId], references: [id])
   requestedById String
   requestedBy   User           @relation("DocumentRequester", fields: [requestedById], references: [id])
   requestNote   String?

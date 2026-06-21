@@ -24,6 +24,15 @@ const navItems = [
     ),
   },
   {
+    label: "Inmobiliarias",
+    href: "/admin/inmobiliarias",
+    icon: (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10h1v11H4zm15 0h1v11h-1zM9 10h1v11H9zm5 0h1v11h-1z" />
+      </svg>
+    ),
+  },
+  {
     label: "Proyectos",
     href: "/admin/proyectos",
     icon: (

@@ -14,18 +14,19 @@ export async function GET(req: NextRequest) {
     const client = await prisma.client.findUnique({ where: { userId: session.userId } });
     if (!client) return NextResponse.json([], { status: 200 });
 
-    const projects = await prisma.project.findMany({
+    const projects = await prisma.unidad.findMany({
       where: { clientId: client.id },
-      include: { status: true },
+      include: { status: true, proyecto: { include: { inmobiliaria: true } } },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(projects);
   }
 
-  const projects = await prisma.project.findMany({
+  const projects = await prisma.unidad.findMany({
     where: clientId ? { clientId } : undefined,
     include: {
       status: true,
+      proyecto: { include: { inmobiliaria: true } },
       client: {
         include: { user: { select: { name: true, rut: true } } },
       },
@@ -44,25 +45,37 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, type, clientId, statusId, deliveryDate, notes } = body;
+    const { name, type, clientId, statusId, deliveryDate, notes, proyectoId, unitNumber, hasStorage, storageNumber, hasParking, parkingNumber } = body;
 
-    if (!name || !clientId || !statusId) {
+    if ((!name && !proyectoId) || !clientId || !statusId) {
       return NextResponse.json(
-        { error: "Nombre, cliente y estado son requeridos" },
+        { error: "Proyecto o nombre, cliente y estado son requeridos" },
         { status: 400 }
       );
     }
 
-    const project = await prisma.project.create({
+    let resolvedName = name;
+    if (!resolvedName && proyectoId) {
+      const proy = await prisma.proyecto.findUnique({ where: { id: proyectoId } });
+      resolvedName = proy?.name ?? "Sin nombre";
+    }
+
+    const project = await prisma.unidad.create({
       data: {
-        name,
+        name: resolvedName,
         type: type ?? "Departamento",
         clientId,
         statusId,
+        proyectoId: proyectoId ?? null,
+        unitNumber: unitNumber ?? null,
+        hasStorage: hasStorage ?? false,
+        storageNumber: storageNumber ?? null,
+        hasParking: hasParking ?? false,
+        parkingNumber: parkingNumber ?? null,
         deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
         notes: notes ?? null,
       },
-      include: { status: true, client: { include: { user: true } } },
+      include: { status: true, proyecto: { include: { inmobiliaria: true } }, client: { include: { user: true } } },
     });
 
     return NextResponse.json(project, { status: 201 });
