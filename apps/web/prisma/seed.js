@@ -1,8 +1,10 @@
 const { Pool } = require("pg");
-const bcrypt = require("bcryptjs");
 const { randomUUID } = require("crypto");
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+// Hash pre-computado de "admin123" con bcrypt rounds=12
+const ADMIN_PASSWORD_HASH = "$2b$12$WMDqkU2xOJz2uorkz2DLoOyZDcN6.g8DP.XvWTsykQ.hr1D0WWsdy";
 
 async function main() {
   const { rows } = await pool.query(
@@ -15,7 +17,7 @@ async function main() {
   }
 
   const now = new Date().toISOString();
-  const password = await bcrypt.hash("admin123", 12);
+  const password = ADMIN_PASSWORD_HASH;
 
   await pool.query(
     `INSERT INTO "User" (id, rut, name, email, password, role, "isActive", "createdAt", "updatedAt")
