@@ -11,7 +11,7 @@ function getSecret() {
 }
 
 export async function signToken(payload: JwtPayload): Promise<string> {
-  return new SignJWT(payload as Record<string, unknown>)
+  return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
     .sign(getSecret());
