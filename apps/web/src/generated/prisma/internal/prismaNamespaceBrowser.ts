@@ -124,6 +124,7 @@ export const ProyectoScalarFieldEnum = {
   name: 'name',
   type: 'type',
   address: 'address',
+  deliveryStatus: 'deliveryStatus',
   deliveryDate: 'deliveryDate',
   description: 'description',
   createdAt: 'createdAt',

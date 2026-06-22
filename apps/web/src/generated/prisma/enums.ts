@@ -26,3 +26,12 @@ export const DocumentStatus = {
 } as const
 
 export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]
+
+
+export const DeliveryStatus = {
+  VERDE: 'VERDE',
+  EN_BLANCO: 'EN_BLANCO',
+  ENTREGA_INMEDIATA: 'ENTREGA_INMEDIATA'
+} as const
+
+export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]

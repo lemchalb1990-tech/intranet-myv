@@ -10,7 +10,10 @@ export async function GET() {
 
   const inmobiliarias = await prisma.inmobiliaria.findMany({
     include: {
-      proyectos: { orderBy: { name: "asc" } },
+      proyectos: {
+        orderBy: { name: "asc" },
+        include: { _count: { select: { unidades: true } } },
+      },
       _count: { select: { proyectos: true } },
     },
     orderBy: { name: "asc" },
@@ -26,14 +29,14 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { name, rut, address } = body;
+  const { name } = body;
 
   if (!name) {
     return NextResponse.json({ error: "Nombre requerido" }, { status: 400 });
   }
 
   const inmobiliaria = await prisma.inmobiliaria.create({
-    data: { name, rut: rut ?? null, address: address ?? null },
+    data: { name },
   });
 
   return NextResponse.json(inmobiliaria, { status: 201 });

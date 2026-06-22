@@ -39,15 +39,11 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const { name, rut, address } = await req.json();
+  const { name } = await req.json();
 
   const updated = await prisma.inmobiliaria.update({
     where: { id },
-    data: {
-      name: name ?? undefined,
-      rut: rut !== undefined ? rut : undefined,
-      address: address !== undefined ? address : undefined,
-    },
+    data: { name: name ?? undefined },
   });
 
   return NextResponse.json(updated);

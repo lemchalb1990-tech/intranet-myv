@@ -20,6 +20,12 @@ enum DocumentStatus {
   REJECTED
 }
 
+enum DeliveryStatus {
+  VERDE
+  EN_BLANCO
+  ENTREGA_INMEDIATA
+}
+
 model User {
   id        String   @id @default(cuid())
   rut       String   @unique
@@ -62,17 +68,18 @@ model Inmobiliaria {
 }
 
 model Proyecto {
-  id             String       @id @default(cuid())
+  id             String         @id @default(cuid())
   inmobiliariaId String
-  inmobiliaria   Inmobiliaria @relation(fields: [inmobiliariaId], references: [id], onDelete: Cascade)
+  inmobiliaria   Inmobiliaria   @relation(fields: [inmobiliariaId], references: [id], onDelete: Cascade)
   name           String
-  type           String       @default("Departamento")
+  type           String         @default("Departamento")
   address        String?
+  deliveryStatus DeliveryStatus?
   deliveryDate   DateTime?
   description    String?
   unidades       Unidad[]
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model ProjectStatus {

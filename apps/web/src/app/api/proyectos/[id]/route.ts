@@ -12,7 +12,7 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const { name, type, address, deliveryDate, description } = await req.json();
+  const { name, type, address, deliveryStatus, deliveryDate, description } = await req.json();
 
   const updated = await prisma.proyecto.update({
     where: { id },
@@ -20,6 +20,7 @@ export async function PATCH(
       name: name ?? undefined,
       type: type ?? undefined,
       address: address !== undefined ? address : undefined,
+      deliveryStatus: deliveryStatus !== undefined ? (deliveryStatus || null) : undefined,
       deliveryDate: deliveryDate !== undefined ? (deliveryDate ? new Date(deliveryDate) : null) : undefined,
       description: description !== undefined ? description : undefined,
     },

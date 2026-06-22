@@ -2,31 +2,50 @@
 
 import { useEffect, useState } from "react";
 
+type DeliveryStatus = "VERDE" | "EN_BLANCO" | "ENTREGA_INMEDIATA";
+
+const DELIVERY_STATUS_OPTIONS: { value: DeliveryStatus; label: string; color: string }[] = [
+  { value: "VERDE", label: "Verde", color: "#22c55e" },
+  { value: "EN_BLANCO", label: "En blanco", color: "#94a3b8" },
+  { value: "ENTREGA_INMEDIATA", label: "Entrega inmediata", color: "#3b82f6" },
+];
+
+function DeliveryStatusBadge({ status }: { status: DeliveryStatus | null }) {
+  if (!status) return <span className="text-slate-400 text-xs">—</span>;
+  const opt = DELIVERY_STATUS_OPTIONS.find((o) => o.value === status);
+  if (!opt) return null;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs">
+      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color }} />
+      {opt.label}
+    </span>
+  );
+}
+
 interface Proyecto {
   id: string;
   name: string;
   type: string;
+  address: string | null;
+  deliveryStatus: DeliveryStatus | null;
+  deliveryDate: string | null;
   _count: { unidades: number };
 }
 
 interface Inmobiliaria {
   id: string;
   name: string;
-  rut: string | null;
-  address: string | null;
   proyectos: Proyecto[];
   _count: { proyectos: number };
 }
-
-const TIPOS = ["Departamento", "Casa", "Oficina", "Local Comercial", "Otro"];
 
 export default function InmobiliariasPage() {
   const [inmobiliarias, setInmobiliarias] = useState<Inmobiliaria[]>([]);
   const [loading, setLoading] = useState(true);
   const [showInmModal, setShowInmModal] = useState(false);
   const [editInm, setEditInm] = useState<Inmobiliaria | null>(null);
-  const [showProyModal, setShowProyModal] = useState<string | null>(null);
-  const [editProy, setEditProy] = useState<{ inmobiliariaId: string; proy: Proyecto } | null>(null);
+  const [showProyModal, setShowProyModal] = useState(false);
+  const [editProy, setEditProy] = useState<Proyecto | null>(null);
 
   function load() {
     setLoading(true);
@@ -57,15 +76,26 @@ export default function InmobiliariasPage() {
           <h1 className="text-xl font-semibold text-slate-800">Inmobiliarias</h1>
           <p className="text-sm text-slate-500 mt-0.5">{inmobiliarias.length} inmobiliaria(s)</p>
         </div>
-        <button
-          onClick={() => { setEditInm(null); setShowInmModal(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-700 transition"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Nueva inmobiliaria
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => { setEditProy(null); setShowProyModal(true); }}
+            className="flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-50 transition"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Nuevo proyecto
+          </button>
+          <button
+            onClick={() => { setEditInm(null); setShowInmModal(true); }}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-700 transition"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Nueva inmobiliaria
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -83,19 +113,9 @@ export default function InmobiliariasPage() {
               <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                 <div>
                   <p className="font-semibold text-slate-800">{inm.name}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    {inm.rut && <span>{inm.rut} · </span>}
-                    {inm.address ?? "Sin dirección"}
-                    {" · "}{inm._count.proyectos} proyecto(s)
-                  </p>
+                  <p className="text-xs text-slate-400 mt-0.5">{inm._count.proyectos} proyecto(s)</p>
                 </div>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => { setShowProyModal(inm.id); }}
-                    className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition"
-                  >
-                    + Proyecto
-                  </button>
                   <button
                     onClick={() => { setEditInm(inm); setShowInmModal(true); }}
                     className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition"
@@ -118,7 +138,9 @@ export default function InmobiliariasPage() {
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-100">
                       <th className="text-left px-5 py-2 text-xs font-medium text-slate-500 uppercase tracking-wide">Proyecto</th>
-                      <th className="text-left px-5 py-2 text-xs font-medium text-slate-500 uppercase tracking-wide">Tipo</th>
+                      <th className="text-left px-5 py-2 text-xs font-medium text-slate-500 uppercase tracking-wide">Dirección</th>
+                      <th className="text-left px-5 py-2 text-xs font-medium text-slate-500 uppercase tracking-wide">Estado entrega</th>
+                      <th className="text-left px-5 py-2 text-xs font-medium text-slate-500 uppercase tracking-wide">Fecha aprox.</th>
                       <th className="text-left px-5 py-2 text-xs font-medium text-slate-500 uppercase tracking-wide">Unidades</th>
                       <th className="px-5 py-2" />
                     </tr>
@@ -127,12 +149,16 @@ export default function InmobiliariasPage() {
                     {inm.proyectos.map((p) => (
                       <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                         <td className="px-5 py-3 font-medium text-slate-800">{p.name}</td>
-                        <td className="px-5 py-3 text-slate-500">{p.type}</td>
+                        <td className="px-5 py-3 text-slate-500 text-xs">{p.address ?? "—"}</td>
+                        <td className="px-5 py-3"><DeliveryStatusBadge status={p.deliveryStatus} /></td>
+                        <td className="px-5 py-3 text-slate-500 text-xs">
+                          {p.deliveryDate ? new Date(p.deliveryDate).toLocaleDateString("es-CL", { month: "short", year: "numeric" }) : "—"}
+                        </td>
                         <td className="px-5 py-3 text-slate-500">{p._count.unidades}</td>
                         <td className="px-5 py-3">
                           <div className="flex gap-2 justify-end">
                             <button
-                              onClick={() => setEditProy({ inmobiliariaId: inm.id, proy: p })}
+                              onClick={() => setEditProy(p)}
                               className="text-xs text-slate-500 hover:text-slate-700"
                             >
                               Editar
@@ -165,17 +191,17 @@ export default function InmobiliariasPage() {
 
       {showProyModal && (
         <ProyectoModal
-          inmobiliariaId={showProyModal}
+          inmobiliarias={inmobiliarias}
           initial={null}
-          onClose={() => setShowProyModal(null)}
-          onSaved={() => { setShowProyModal(null); load(); }}
+          onClose={() => setShowProyModal(false)}
+          onSaved={() => { setShowProyModal(false); load(); }}
         />
       )}
 
       {editProy && (
         <ProyectoModal
-          inmobiliariaId={editProy.inmobiliariaId}
-          initial={editProy.proy}
+          inmobiliarias={inmobiliarias}
+          initial={editProy}
           onClose={() => setEditProy(null)}
           onSaved={() => { setEditProy(null); load(); }}
         />
@@ -193,11 +219,7 @@ function InmobiliariaModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const [form, setForm] = useState({
-    name: initial?.name ?? "",
-    rut: initial?.rut ?? "",
-    address: initial?.address ?? "",
-  });
+  const [name, setName] = useState(initial?.name ?? "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -211,7 +233,7 @@ function InmobiliariaModal({
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: form.name, rut: form.rut || null, address: form.address || null }),
+        body: JSON.stringify({ name }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); return; }
@@ -233,15 +255,13 @@ function InmobiliariaModal({
         <form onSubmit={handleSubmit} className="px-5 py-4 space-y-3">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
-            <input type="text" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">RUT (opcional)</label>
-            <input type="text" value={form.rut} onChange={(e) => setForm((f) => ({ ...f, rut: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Dirección (opcional)</label>
-            <input type="text" value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+            />
           </div>
           {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
           <div className="flex gap-2 pt-1">
@@ -255,22 +275,22 @@ function InmobiliariaModal({
 }
 
 function ProyectoModal({
-  inmobiliariaId,
+  inmobiliarias,
   initial,
   onClose,
   onSaved,
 }: {
-  inmobiliariaId: string;
+  inmobiliarias: Inmobiliaria[];
   initial: Proyecto | null;
   onClose: () => void;
   onSaved: () => void;
 }) {
   const [form, setForm] = useState({
+    inmobiliariaId: initial ? (inmobiliarias.find((i) => i.proyectos.some((p) => p.id === initial.id))?.id ?? "") : (inmobiliarias[0]?.id ?? ""),
     name: initial?.name ?? "",
-    type: initial?.type ?? "Departamento",
-    address: "",
-    deliveryDate: "",
-    description: "",
+    address: initial?.address ?? "",
+    deliveryStatus: initial?.deliveryStatus ?? ("" as DeliveryStatus | ""),
+    deliveryDate: initial?.deliveryDate ? new Date(initial.deliveryDate).toISOString().split("T")[0] : "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -282,9 +302,13 @@ function ProyectoModal({
     try {
       const method = initial ? "PATCH" : "POST";
       const url = initial ? `/api/proyectos/${initial.id}` : "/api/proyectos";
-      const body = initial
-        ? { name: form.name, type: form.type }
-        : { inmobiliariaId, name: form.name, type: form.type, address: form.address || null, deliveryDate: form.deliveryDate || null, description: form.description || null };
+      const body = {
+        ...(initial ? {} : { inmobiliariaId: form.inmobiliariaId }),
+        name: form.name,
+        address: form.address || null,
+        deliveryStatus: form.deliveryStatus || null,
+        deliveryDate: form.deliveryDate || null,
+      };
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -308,32 +332,91 @@ function ProyectoModal({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="px-5 py-4 space-y-3">
+          {!initial && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Inmobiliaria</label>
+              <select
+                value={form.inmobiliariaId}
+                onChange={(e) => setForm((f) => ({ ...f, inmobiliariaId: e.target.value }))}
+                required
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white"
+              >
+                <option value="">Seleccionar...</option>
+                {inmobiliarias.map((i) => (
+                  <option key={i.id} value={i.id}>{i.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Nombre del proyecto</label>
-            <input type="text" placeholder="Torre Norte, Condominio Las Flores..." value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              required
+              placeholder="Torre Norte, Condominio Las Flores..."
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Tipo de unidad</label>
-            <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white">
-              {TIPOS.map((t) => <option key={t}>{t}</option>)}
-            </select>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Dirección</label>
+            <input
+              type="text"
+              value={form.address}
+              onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+              placeholder="Av. Principal 123, Santiago"
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+            />
           </div>
-          {!initial && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Dirección (opcional)</label>
-                <input type="text" value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Fecha de entrega estimada (opcional)</label>
-                <input type="date" value={form.deliveryDate} onChange={(e) => setForm((f) => ({ ...f, deliveryDate: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Descripción (opcional)</label>
-                <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={2} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 resize-none" />
-              </div>
-            </>
-          )}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Estado actual de entrega</label>
+            <div className="flex flex-col gap-2">
+              {DELIVERY_STATUS_OPTIONS.map((opt) => (
+                <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="deliveryStatus"
+                    value={opt.value}
+                    checked={form.deliveryStatus === opt.value}
+                    onChange={() => setForm((f) => ({ ...f, deliveryStatus: opt.value }))}
+                    className="sr-only"
+                  />
+                  <span
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      form.deliveryStatus === opt.value ? "border-slate-600" : "border-slate-300"
+                    }`}
+                  >
+                    {form.deliveryStatus === opt.value && (
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color }} />
+                    )}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-sm text-slate-700">
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: opt.color }} />
+                    {opt.label}
+                  </span>
+                </label>
+              ))}
+              {form.deliveryStatus && (
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, deliveryStatus: "" }))}
+                  className="text-xs text-slate-400 hover:text-slate-600 text-left"
+                >
+                  Quitar estado
+                </button>
+              )}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Fecha aproximada de entrega</label>
+            <input
+              type="date"
+              value={form.deliveryDate}
+              onChange={(e) => setForm((f) => ({ ...f, deliveryDate: e.target.value }))}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+            />
+          </div>
           {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
           <div className="flex gap-2 pt-1">
             <button type="button" onClick={onClose} className="flex-1 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">Cancelar</button>

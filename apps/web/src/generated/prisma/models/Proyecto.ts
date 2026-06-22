@@ -30,6 +30,7 @@ export type ProyectoMinAggregateOutputType = {
   name: string | null
   type: string | null
   address: string | null
+  deliveryStatus: $Enums.DeliveryStatus | null
   deliveryDate: Date | null
   description: string | null
   createdAt: Date | null
@@ -42,6 +43,7 @@ export type ProyectoMaxAggregateOutputType = {
   name: string | null
   type: string | null
   address: string | null
+  deliveryStatus: $Enums.DeliveryStatus | null
   deliveryDate: Date | null
   description: string | null
   createdAt: Date | null
@@ -54,6 +56,7 @@ export type ProyectoCountAggregateOutputType = {
   name: number
   type: number
   address: number
+  deliveryStatus: number
   deliveryDate: number
   description: number
   createdAt: number
@@ -68,6 +71,7 @@ export type ProyectoMinAggregateInputType = {
   name?: true
   type?: true
   address?: true
+  deliveryStatus?: true
   deliveryDate?: true
   description?: true
   createdAt?: true
@@ -80,6 +84,7 @@ export type ProyectoMaxAggregateInputType = {
   name?: true
   type?: true
   address?: true
+  deliveryStatus?: true
   deliveryDate?: true
   description?: true
   createdAt?: true
@@ -92,6 +97,7 @@ export type ProyectoCountAggregateInputType = {
   name?: true
   type?: true
   address?: true
+  deliveryStatus?: true
   deliveryDate?: true
   description?: true
   createdAt?: true
@@ -177,6 +183,7 @@ export type ProyectoGroupByOutputType = {
   name: string
   type: string
   address: string | null
+  deliveryStatus: $Enums.DeliveryStatus | null
   deliveryDate: Date | null
   description: string | null
   createdAt: Date
@@ -210,6 +217,7 @@ export type ProyectoWhereInput = {
   name?: Prisma.StringFilter<"Proyecto"> | string
   type?: Prisma.StringFilter<"Proyecto"> | string
   address?: Prisma.StringNullableFilter<"Proyecto"> | string | null
+  deliveryStatus?: Prisma.EnumDeliveryStatusNullableFilter<"Proyecto"> | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.DateTimeNullableFilter<"Proyecto"> | Date | string | null
   description?: Prisma.StringNullableFilter<"Proyecto"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Proyecto"> | Date | string
@@ -224,6 +232,7 @@ export type ProyectoOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveryDate?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -241,6 +250,7 @@ export type ProyectoWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Proyecto"> | string
   type?: Prisma.StringFilter<"Proyecto"> | string
   address?: Prisma.StringNullableFilter<"Proyecto"> | string | null
+  deliveryStatus?: Prisma.EnumDeliveryStatusNullableFilter<"Proyecto"> | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.DateTimeNullableFilter<"Proyecto"> | Date | string | null
   description?: Prisma.StringNullableFilter<"Proyecto"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Proyecto"> | Date | string
@@ -255,6 +265,7 @@ export type ProyectoOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveryDate?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -273,6 +284,7 @@ export type ProyectoScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Proyecto"> | string
   type?: Prisma.StringWithAggregatesFilter<"Proyecto"> | string
   address?: Prisma.StringNullableWithAggregatesFilter<"Proyecto"> | string | null
+  deliveryStatus?: Prisma.EnumDeliveryStatusNullableWithAggregatesFilter<"Proyecto"> | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Proyecto"> | Date | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Proyecto"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Proyecto"> | Date | string
@@ -284,6 +296,7 @@ export type ProyectoCreateInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -298,6 +311,7 @@ export type ProyectoUncheckedCreateInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -310,6 +324,7 @@ export type ProyectoUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -324,6 +339,7 @@ export type ProyectoUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -337,6 +353,7 @@ export type ProyectoCreateManyInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -348,6 +365,7 @@ export type ProyectoUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -360,6 +378,7 @@ export type ProyectoUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -382,6 +401,7 @@ export type ProyectoCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deliveryStatus?: Prisma.SortOrder
   deliveryDate?: Prisma.SortOrder
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -394,6 +414,7 @@ export type ProyectoMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deliveryStatus?: Prisma.SortOrder
   deliveryDate?: Prisma.SortOrder
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -406,6 +427,7 @@ export type ProyectoMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deliveryStatus?: Prisma.SortOrder
   deliveryDate?: Prisma.SortOrder
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -459,6 +481,10 @@ export type ProyectoUncheckedUpdateManyWithoutInmobiliariaNestedInput = {
   deleteMany?: Prisma.ProyectoScalarWhereInput | Prisma.ProyectoScalarWhereInput[]
 }
 
+export type NullableEnumDeliveryStatusFieldUpdateOperationsInput = {
+  set?: $Enums.DeliveryStatus | null
+}
+
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
@@ -484,6 +510,7 @@ export type ProyectoCreateWithoutInmobiliariaInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -496,6 +523,7 @@ export type ProyectoUncheckedCreateWithoutInmobiliariaInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -538,6 +566,7 @@ export type ProyectoScalarWhereInput = {
   name?: Prisma.StringFilter<"Proyecto"> | string
   type?: Prisma.StringFilter<"Proyecto"> | string
   address?: Prisma.StringNullableFilter<"Proyecto"> | string | null
+  deliveryStatus?: Prisma.EnumDeliveryStatusNullableFilter<"Proyecto"> | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.DateTimeNullableFilter<"Proyecto"> | Date | string | null
   description?: Prisma.StringNullableFilter<"Proyecto"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Proyecto"> | Date | string
@@ -549,6 +578,7 @@ export type ProyectoCreateWithoutUnidadesInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -562,6 +592,7 @@ export type ProyectoUncheckedCreateWithoutUnidadesInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -589,6 +620,7 @@ export type ProyectoUpdateWithoutUnidadesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -602,6 +634,7 @@ export type ProyectoUncheckedUpdateWithoutUnidadesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -613,6 +646,7 @@ export type ProyectoCreateManyInmobiliariaInput = {
   name: string
   type?: string
   address?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
   deliveryDate?: Date | string | null
   description?: string | null
   createdAt?: Date | string
@@ -624,6 +658,7 @@ export type ProyectoUpdateWithoutInmobiliariaInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -636,6 +671,7 @@ export type ProyectoUncheckedUpdateWithoutInmobiliariaInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -648,6 +684,7 @@ export type ProyectoUncheckedUpdateManyWithoutInmobiliariaInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -691,6 +728,7 @@ export type ProyectoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name?: boolean
   type?: boolean
   address?: boolean
+  deliveryStatus?: boolean
   deliveryDate?: boolean
   description?: boolean
   createdAt?: boolean
@@ -706,6 +744,7 @@ export type ProyectoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   name?: boolean
   type?: boolean
   address?: boolean
+  deliveryStatus?: boolean
   deliveryDate?: boolean
   description?: boolean
   createdAt?: boolean
@@ -719,6 +758,7 @@ export type ProyectoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   name?: boolean
   type?: boolean
   address?: boolean
+  deliveryStatus?: boolean
   deliveryDate?: boolean
   description?: boolean
   createdAt?: boolean
@@ -732,13 +772,14 @@ export type ProyectoSelectScalar = {
   name?: boolean
   type?: boolean
   address?: boolean
+  deliveryStatus?: boolean
   deliveryDate?: boolean
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProyectoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "inmobiliariaId" | "name" | "type" | "address" | "deliveryDate" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["proyecto"]>
+export type ProyectoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "inmobiliariaId" | "name" | "type" | "address" | "deliveryStatus" | "deliveryDate" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["proyecto"]>
 export type ProyectoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inmobiliaria?: boolean | Prisma.InmobiliariaDefaultArgs<ExtArgs>
   unidades?: boolean | Prisma.Proyecto$unidadesArgs<ExtArgs>
@@ -763,6 +804,7 @@ export type $ProyectoPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     name: string
     type: string
     address: string | null
+    deliveryStatus: $Enums.DeliveryStatus | null
     deliveryDate: Date | null
     description: string | null
     createdAt: Date
@@ -1197,6 +1239,7 @@ export interface ProyectoFieldRefs {
   readonly name: Prisma.FieldRef<"Proyecto", 'String'>
   readonly type: Prisma.FieldRef<"Proyecto", 'String'>
   readonly address: Prisma.FieldRef<"Proyecto", 'String'>
+  readonly deliveryStatus: Prisma.FieldRef<"Proyecto", 'DeliveryStatus'>
   readonly deliveryDate: Prisma.FieldRef<"Proyecto", 'DateTime'>
   readonly description: Prisma.FieldRef<"Proyecto", 'String'>
   readonly createdAt: Prisma.FieldRef<"Proyecto", 'DateTime'>

@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { inmobiliariaId, name, type, address, deliveryDate, description } = body;
+  const { inmobiliariaId, name, type, address, deliveryStatus, deliveryDate, description } = body;
 
   if (!inmobiliariaId || !name) {
     return NextResponse.json({ error: "Inmobiliaria y nombre son requeridos" }, { status: 400 });
@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
       name,
       type: type ?? "Departamento",
       address: address ?? null,
+      deliveryStatus: deliveryStatus ?? null,
       deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
       description: description ?? null,
     },
