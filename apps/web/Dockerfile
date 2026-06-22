@@ -24,7 +24,9 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 
-RUN npm install -g prisma@7.8.0
+RUN npm install -g prisma@7.8.0 && \
+    mkdir -p /app/node_modules && \
+    ln -s /usr/local/lib/node_modules/prisma /app/node_modules/prisma
 
 RUN mkdir -p ./uploads && chown nextjs:nodejs ./uploads
 
