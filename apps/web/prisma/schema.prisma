@@ -103,10 +103,11 @@ model Unidad {
   status        ProjectStatus @relation(fields: [statusId], references: [id])
   deliveryDate  DateTime?
   notes         String?
-  documents     Document[]
-  steps         UnitStep[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  documents          Document[]
+  steps              UnitStep[]
+  notificationLogs   NotificationLog[]
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 
   @@map("projects")
 }
@@ -152,6 +153,19 @@ model Document {
   uploadedAt    DateTime?
   reviewedAt    DateTime?
   updatedAt     DateTime       @updatedAt
+}
+
+model NotificationLog {
+  id          String   @id @default(cuid())
+  unidadId    String
+  unidad      Unidad   @relation(fields: [unidadId], references: [id], onDelete: Cascade)
+  stepName    String
+  clientName  String
+  clientEmail String
+  sentByName  String
+  subject     String
+  body        String
+  sentAt      DateTime @default(now())
 }
 
 model Settings {

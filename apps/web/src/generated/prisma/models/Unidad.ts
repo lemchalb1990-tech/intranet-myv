@@ -267,6 +267,7 @@ export type UnidadWhereInput = {
   status?: Prisma.XOR<Prisma.ProjectStatusScalarRelationFilter, Prisma.ProjectStatusWhereInput>
   documents?: Prisma.DocumentListRelationFilter
   steps?: Prisma.UnitStepListRelationFilter
+  notificationLogs?: Prisma.NotificationLogListRelationFilter
 }
 
 export type UnidadOrderByWithRelationInput = {
@@ -290,6 +291,7 @@ export type UnidadOrderByWithRelationInput = {
   status?: Prisma.ProjectStatusOrderByWithRelationInput
   documents?: Prisma.DocumentOrderByRelationAggregateInput
   steps?: Prisma.UnitStepOrderByRelationAggregateInput
+  notificationLogs?: Prisma.NotificationLogOrderByRelationAggregateInput
 }
 
 export type UnidadWhereUniqueInput = Prisma.AtLeast<{
@@ -316,6 +318,7 @@ export type UnidadWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.XOR<Prisma.ProjectStatusScalarRelationFilter, Prisma.ProjectStatusWhereInput>
   documents?: Prisma.DocumentListRelationFilter
   steps?: Prisma.UnitStepListRelationFilter
+  notificationLogs?: Prisma.NotificationLogListRelationFilter
 }, "id">
 
 export type UnidadOrderByWithAggregationInput = {
@@ -378,6 +381,7 @@ export type UnidadCreateInput = {
   status: Prisma.ProjectStatusCreateNestedOneWithoutProjectsInput
   documents?: Prisma.DocumentCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadUncheckedCreateInput = {
@@ -398,6 +402,7 @@ export type UnidadUncheckedCreateInput = {
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepUncheckedCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadUpdateInput = {
@@ -418,6 +423,7 @@ export type UnidadUpdateInput = {
   status?: Prisma.ProjectStatusUpdateOneRequiredWithoutProjectsNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateInput = {
@@ -438,6 +444,7 @@ export type UnidadUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUncheckedUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadCreateManyInput = {
@@ -721,6 +728,20 @@ export type UnidadUpdateOneWithoutDocumentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UnidadUpdateToOneWithWhereWithoutDocumentsInput, Prisma.UnidadUpdateWithoutDocumentsInput>, Prisma.UnidadUncheckedUpdateWithoutDocumentsInput>
 }
 
+export type UnidadCreateNestedOneWithoutNotificationLogsInput = {
+  create?: Prisma.XOR<Prisma.UnidadCreateWithoutNotificationLogsInput, Prisma.UnidadUncheckedCreateWithoutNotificationLogsInput>
+  connectOrCreate?: Prisma.UnidadCreateOrConnectWithoutNotificationLogsInput
+  connect?: Prisma.UnidadWhereUniqueInput
+}
+
+export type UnidadUpdateOneRequiredWithoutNotificationLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.UnidadCreateWithoutNotificationLogsInput, Prisma.UnidadUncheckedCreateWithoutNotificationLogsInput>
+  connectOrCreate?: Prisma.UnidadCreateOrConnectWithoutNotificationLogsInput
+  upsert?: Prisma.UnidadUpsertWithoutNotificationLogsInput
+  connect?: Prisma.UnidadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UnidadUpdateToOneWithWhereWithoutNotificationLogsInput, Prisma.UnidadUpdateWithoutNotificationLogsInput>, Prisma.UnidadUncheckedUpdateWithoutNotificationLogsInput>
+}
+
 export type UnidadCreateWithoutClientInput = {
   id?: string
   unitNumber?: string | null
@@ -738,6 +759,7 @@ export type UnidadCreateWithoutClientInput = {
   status: Prisma.ProjectStatusCreateNestedOneWithoutProjectsInput
   documents?: Prisma.DocumentCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadUncheckedCreateWithoutClientInput = {
@@ -757,6 +779,7 @@ export type UnidadUncheckedCreateWithoutClientInput = {
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepUncheckedCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadCreateOrConnectWithoutClientInput = {
@@ -823,6 +846,7 @@ export type UnidadCreateWithoutProyectoInput = {
   status: Prisma.ProjectStatusCreateNestedOneWithoutProjectsInput
   documents?: Prisma.DocumentCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadUncheckedCreateWithoutProyectoInput = {
@@ -842,6 +866,7 @@ export type UnidadUncheckedCreateWithoutProyectoInput = {
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepUncheckedCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadCreateOrConnectWithoutProyectoInput = {
@@ -887,6 +912,7 @@ export type UnidadCreateWithoutStatusInput = {
   proyecto?: Prisma.ProyectoCreateNestedOneWithoutUnidadesInput
   documents?: Prisma.DocumentCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadUncheckedCreateWithoutStatusInput = {
@@ -906,6 +932,7 @@ export type UnidadUncheckedCreateWithoutStatusInput = {
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutProjectInput
   steps?: Prisma.UnitStepUncheckedCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadCreateOrConnectWithoutStatusInput = {
@@ -951,6 +978,7 @@ export type UnidadCreateWithoutStepsInput = {
   proyecto?: Prisma.ProyectoCreateNestedOneWithoutUnidadesInput
   status: Prisma.ProjectStatusCreateNestedOneWithoutProjectsInput
   documents?: Prisma.DocumentCreateNestedManyWithoutProjectInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadUncheckedCreateWithoutStepsInput = {
@@ -970,6 +998,7 @@ export type UnidadUncheckedCreateWithoutStepsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutProjectInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadCreateOrConnectWithoutStepsInput = {
@@ -1005,6 +1034,7 @@ export type UnidadUpdateWithoutStepsInput = {
   proyecto?: Prisma.ProyectoUpdateOneWithoutUnidadesNestedInput
   status?: Prisma.ProjectStatusUpdateOneRequiredWithoutProjectsNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutProjectNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateWithoutStepsInput = {
@@ -1024,6 +1054,7 @@ export type UnidadUncheckedUpdateWithoutStepsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutProjectNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadCreateWithoutDocumentsInput = {
@@ -1043,6 +1074,7 @@ export type UnidadCreateWithoutDocumentsInput = {
   proyecto?: Prisma.ProyectoCreateNestedOneWithoutUnidadesInput
   status: Prisma.ProjectStatusCreateNestedOneWithoutProjectsInput
   steps?: Prisma.UnitStepCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadUncheckedCreateWithoutDocumentsInput = {
@@ -1062,6 +1094,7 @@ export type UnidadUncheckedCreateWithoutDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   steps?: Prisma.UnitStepUncheckedCreateNestedManyWithoutUnidadInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUnidadInput
 }
 
 export type UnidadCreateOrConnectWithoutDocumentsInput = {
@@ -1097,6 +1130,7 @@ export type UnidadUpdateWithoutDocumentsInput = {
   proyecto?: Prisma.ProyectoUpdateOneWithoutUnidadesNestedInput
   status?: Prisma.ProjectStatusUpdateOneRequiredWithoutProjectsNestedInput
   steps?: Prisma.UnitStepUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateWithoutDocumentsInput = {
@@ -1115,6 +1149,103 @@ export type UnidadUncheckedUpdateWithoutDocumentsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  steps?: Prisma.UnitStepUncheckedUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUnidadNestedInput
+}
+
+export type UnidadCreateWithoutNotificationLogsInput = {
+  id?: string
+  unitNumber?: string | null
+  hasStorage?: boolean
+  storageNumber?: string | null
+  hasParking?: boolean
+  parkingNumber?: string | null
+  name: string
+  type?: string
+  deliveryDate?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  client: Prisma.ClientCreateNestedOneWithoutProjectsInput
+  proyecto?: Prisma.ProyectoCreateNestedOneWithoutUnidadesInput
+  status: Prisma.ProjectStatusCreateNestedOneWithoutProjectsInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutProjectInput
+  steps?: Prisma.UnitStepCreateNestedManyWithoutUnidadInput
+}
+
+export type UnidadUncheckedCreateWithoutNotificationLogsInput = {
+  id?: string
+  clientId: string
+  proyectoId?: string | null
+  unitNumber?: string | null
+  hasStorage?: boolean
+  storageNumber?: string | null
+  hasParking?: boolean
+  parkingNumber?: string | null
+  name: string
+  type?: string
+  statusId: string
+  deliveryDate?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutProjectInput
+  steps?: Prisma.UnitStepUncheckedCreateNestedManyWithoutUnidadInput
+}
+
+export type UnidadCreateOrConnectWithoutNotificationLogsInput = {
+  where: Prisma.UnidadWhereUniqueInput
+  create: Prisma.XOR<Prisma.UnidadCreateWithoutNotificationLogsInput, Prisma.UnidadUncheckedCreateWithoutNotificationLogsInput>
+}
+
+export type UnidadUpsertWithoutNotificationLogsInput = {
+  update: Prisma.XOR<Prisma.UnidadUpdateWithoutNotificationLogsInput, Prisma.UnidadUncheckedUpdateWithoutNotificationLogsInput>
+  create: Prisma.XOR<Prisma.UnidadCreateWithoutNotificationLogsInput, Prisma.UnidadUncheckedCreateWithoutNotificationLogsInput>
+  where?: Prisma.UnidadWhereInput
+}
+
+export type UnidadUpdateToOneWithWhereWithoutNotificationLogsInput = {
+  where?: Prisma.UnidadWhereInput
+  data: Prisma.XOR<Prisma.UnidadUpdateWithoutNotificationLogsInput, Prisma.UnidadUncheckedUpdateWithoutNotificationLogsInput>
+}
+
+export type UnidadUpdateWithoutNotificationLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  unitNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasStorage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  storageNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasParking?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parkingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  client?: Prisma.ClientUpdateOneRequiredWithoutProjectsNestedInput
+  proyecto?: Prisma.ProyectoUpdateOneWithoutUnidadesNestedInput
+  status?: Prisma.ProjectStatusUpdateOneRequiredWithoutProjectsNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutProjectNestedInput
+  steps?: Prisma.UnitStepUpdateManyWithoutUnidadNestedInput
+}
+
+export type UnidadUncheckedUpdateWithoutNotificationLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  proyectoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasStorage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  storageNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasParking?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parkingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  statusId?: Prisma.StringFieldUpdateOperationsInput | string
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUncheckedUpdateManyWithoutUnidadNestedInput
 }
 
@@ -1152,6 +1283,7 @@ export type UnidadUpdateWithoutClientInput = {
   status?: Prisma.ProjectStatusUpdateOneRequiredWithoutProjectsNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateWithoutClientInput = {
@@ -1171,6 +1303,7 @@ export type UnidadUncheckedUpdateWithoutClientInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUncheckedUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateManyWithoutClientInput = {
@@ -1224,6 +1357,7 @@ export type UnidadUpdateWithoutProyectoInput = {
   status?: Prisma.ProjectStatusUpdateOneRequiredWithoutProjectsNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateWithoutProyectoInput = {
@@ -1243,6 +1377,7 @@ export type UnidadUncheckedUpdateWithoutProyectoInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUncheckedUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateManyWithoutProyectoInput = {
@@ -1296,6 +1431,7 @@ export type UnidadUpdateWithoutStatusInput = {
   proyecto?: Prisma.ProyectoUpdateOneWithoutUnidadesNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateWithoutStatusInput = {
@@ -1315,6 +1451,7 @@ export type UnidadUncheckedUpdateWithoutStatusInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutProjectNestedInput
   steps?: Prisma.UnitStepUncheckedUpdateManyWithoutUnidadNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUnidadNestedInput
 }
 
 export type UnidadUncheckedUpdateManyWithoutStatusInput = {
@@ -1342,11 +1479,13 @@ export type UnidadUncheckedUpdateManyWithoutStatusInput = {
 export type UnidadCountOutputType = {
   documents: number
   steps: number
+  notificationLogs: number
 }
 
 export type UnidadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   documents?: boolean | UnidadCountOutputTypeCountDocumentsArgs
   steps?: boolean | UnidadCountOutputTypeCountStepsArgs
+  notificationLogs?: boolean | UnidadCountOutputTypeCountNotificationLogsArgs
 }
 
 /**
@@ -1373,6 +1512,13 @@ export type UnidadCountOutputTypeCountStepsArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.UnitStepWhereInput
 }
 
+/**
+ * UnidadCountOutputType without action
+ */
+export type UnidadCountOutputTypeCountNotificationLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationLogWhereInput
+}
+
 
 export type UnidadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1395,6 +1541,7 @@ export type UnidadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   status?: boolean | Prisma.ProjectStatusDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Unidad$documentsArgs<ExtArgs>
   steps?: boolean | Prisma.Unidad$stepsArgs<ExtArgs>
+  notificationLogs?: boolean | Prisma.Unidad$notificationLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UnidadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["unidad"]>
 
@@ -1465,6 +1612,7 @@ export type UnidadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   status?: boolean | Prisma.ProjectStatusDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Unidad$documentsArgs<ExtArgs>
   steps?: boolean | Prisma.Unidad$stepsArgs<ExtArgs>
+  notificationLogs?: boolean | Prisma.Unidad$notificationLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UnidadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UnidadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1486,6 +1634,7 @@ export type $UnidadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     status: Prisma.$ProjectStatusPayload<ExtArgs>
     documents: Prisma.$DocumentPayload<ExtArgs>[]
     steps: Prisma.$UnitStepPayload<ExtArgs>[]
+    notificationLogs: Prisma.$NotificationLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1902,6 +2051,7 @@ export interface Prisma__UnidadClient<T, Null = never, ExtArgs extends runtime.T
   status<T extends Prisma.ProjectStatusDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectStatusDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectStatusClient<runtime.Types.Result.GetResult<Prisma.$ProjectStatusPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   documents<T extends Prisma.Unidad$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Unidad$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   steps<T extends Prisma.Unidad$stepsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Unidad$stepsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UnitStepPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notificationLogs<T extends Prisma.Unidad$notificationLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Unidad$notificationLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2411,6 +2561,30 @@ export type Unidad$stepsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.UnitStepScalarFieldEnum | Prisma.UnitStepScalarFieldEnum[]
+}
+
+/**
+ * Unidad.notificationLogs
+ */
+export type Unidad$notificationLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificationLog
+   */
+  select?: Prisma.NotificationLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NotificationLog
+   */
+  omit?: Prisma.NotificationLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationLogInclude<ExtArgs> | null
+  where?: Prisma.NotificationLogWhereInput
+  orderBy?: Prisma.NotificationLogOrderByWithRelationInput | Prisma.NotificationLogOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationLogScalarFieldEnum | Prisma.NotificationLogScalarFieldEnum[]
 }
 
 /**

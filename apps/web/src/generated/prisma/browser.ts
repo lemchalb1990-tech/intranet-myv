@@ -58,6 +58,11 @@ export type UnitStep = Prisma.UnitStepModel
  */
 export type Document = Prisma.DocumentModel
 /**
+ * Model NotificationLog
+ * 
+ */
+export type NotificationLog = Prisma.NotificationLogModel
+/**
  * Model Settings
  * 
  */

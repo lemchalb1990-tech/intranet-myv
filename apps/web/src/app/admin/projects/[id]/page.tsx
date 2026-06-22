@@ -7,6 +7,17 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { DocumentStatusBadge } from "@/components/ui/Badge";
 
+interface NotificationLog {
+  id: string;
+  stepName: string;
+  clientName: string;
+  clientEmail: string;
+  sentByName: string;
+  subject: string;
+  body: string;
+  sentAt: string;
+}
+
 interface UnitStep {
   id: string;
   order: number;
@@ -42,17 +53,22 @@ export default function UnidadDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [unidad, setUnidad] = useState<Unidad | null>(null);
   const [steps, setSteps] = useState<UnitStep[]>([]);
+  const [notifications, setNotifications] = useState<NotificationLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<"pasos" | "notificaciones">("pasos");
   const [showStepModal, setShowStepModal] = useState(false);
   const [editStep, setEditStep] = useState<UnitStep | null>(null);
+  const [expandedLog, setExpandedLog] = useState<string | null>(null);
 
   function load() {
     Promise.all([
       fetch(`/api/projects/${id}`).then((r) => r.json()),
       fetch(`/api/projects/${id}/steps`).then((r) => r.json()),
-    ]).then(([u, s]) => {
+      fetch(`/api/projects/${id}/notifications`).then((r) => r.json()),
+    ]).then(([u, s, n]) => {
       setUnidad(u);
       setSteps(Array.isArray(s) ? s : []);
+      setNotifications(Array.isArray(n) ? n : []);
     }).finally(() => setLoading(false));
   }
 
@@ -60,8 +76,12 @@ export default function UnidadDetailPage() {
 
   async function handleComplete(stepId: string) {
     await fetch(`/api/projects/${id}/steps/${stepId}/complete`, { method: "POST" });
-    const s = await fetch(`/api/projects/${id}/steps`).then((r) => r.json());
+    const [s, n] = await Promise.all([
+      fetch(`/api/projects/${id}/steps`).then((r) => r.json()),
+      fetch(`/api/projects/${id}/notifications`).then((r) => r.json()),
+    ]);
     setSteps(Array.isArray(s) ? s : []);
+    setNotifications(Array.isArray(n) ? n : []);
   }
 
   async function handleDeleteStep(stepId: string) {
@@ -143,8 +163,24 @@ export default function UnidadDetailPage() {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1 bg-slate-100 rounded-lg p-1 w-fit">
+        <button
+          onClick={() => setTab("pasos")}
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${tab === "pasos" ? "bg-white shadow-sm text-slate-800" : "text-slate-500 hover:text-slate-700"}`}
+        >
+          Pasos ({steps.length})
+        </button>
+        <button
+          onClick={() => setTab("notificaciones")}
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${tab === "notificaciones" ? "bg-white shadow-sm text-slate-800" : "text-slate-500 hover:text-slate-700"}`}
+        >
+          Notificaciones ({notifications.length})
+        </button>
+      </div>
+
       {/* Pasos */}
-      <div className="space-y-3">
+      {tab === "pasos" && <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-base font-semibold text-slate-800">Pasos del proceso</h2>
@@ -232,7 +268,54 @@ export default function UnidadDetailPage() {
             ))}
           </div>
         )}
-      </div>
+      </div>}
+
+      {/* Historial de notificaciones */}
+      {tab === "notificaciones" && (
+        <div className="space-y-3">
+          <h2 className="text-base font-semibold text-slate-800">Historial de notificaciones</h2>
+          {notifications.length === 0 ? (
+            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400 text-sm">
+              No se han enviado notificaciones para esta unidad.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {notifications.map((n) => (
+                <div key={n.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                  <div
+                    className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-slate-50 transition"
+                    onClick={() => setExpandedLog(expandedLog === n.id ? null : n.id)}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">{n.stepName}</span>
+                        <p className="text-sm font-medium text-slate-800 truncate">{n.subject}</p>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Para: {n.clientName} ({n.clientEmail}) · Enviado por {n.sentByName} · {format(new Date(n.sentAt), "dd MMM yyyy HH:mm", { locale: es })}
+                      </p>
+                    </div>
+                    <svg
+                      className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform ${expandedLog === n.id ? "rotate-180" : ""}`}
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  {expandedLog === n.id && (
+                    <div className="px-4 py-3 border-t border-slate-100 bg-slate-50">
+                      <p className="text-xs text-slate-500 font-medium mb-2">Contenido del correo:</p>
+                      <div className="text-sm text-slate-700 whitespace-pre-wrap bg-white rounded-lg border border-slate-200 px-3 py-2 font-mono text-xs leading-relaxed">
+                        {n.body}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {showStepModal && (
         <StepModal

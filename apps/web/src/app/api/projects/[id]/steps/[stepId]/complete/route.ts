@@ -59,11 +59,26 @@ export async function POST(
       (_, key: string) => variables[key] ?? ""
     );
 
+    const subject = `Actualización: ${step.name}`;
+    const sentByUser = await prisma.user.findUnique({ where: { id: session.userId }, select: { name: true } });
+
     try {
-      await sendStepNotificationEmail(cliente.email, `Actualización: ${step.name}`, body);
+      await sendStepNotificationEmail(cliente.email, subject, body);
     } catch (err) {
       console.error("Email error:", err);
     }
+
+    await prisma.notificationLog.create({
+      data: {
+        unidadId: id,
+        stepName: step.name,
+        clientName: cliente.name,
+        clientEmail: cliente.email,
+        sentByName: sentByUser?.name ?? session.userId,
+        subject,
+        body,
+      },
+    });
   }
 
   return NextResponse.json(updated);

@@ -392,6 +392,7 @@ export const ModelName = {
   Unidad: 'Unidad',
   UnitStep: 'UnitStep',
   Document: 'Document',
+  NotificationLog: 'NotificationLog',
   Settings: 'Settings'
 } as const
 
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "client" | "inmobiliaria" | "proyecto" | "projectStatus" | "unidad" | "unitStep" | "document" | "settings"
+    modelProps: "user" | "client" | "inmobiliaria" | "proyecto" | "projectStatus" | "unidad" | "unitStep" | "document" | "notificationLog" | "settings"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1004,6 +1005,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NotificationLog: {
+      payload: Prisma.$NotificationLogPayload<ExtArgs>
+      fields: Prisma.NotificationLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotificationLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotificationLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+        }
+        findFirst: {
+          args: Prisma.NotificationLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotificationLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+        }
+        findMany: {
+          args: Prisma.NotificationLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>[]
+        }
+        create: {
+          args: Prisma.NotificationLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+        }
+        createMany: {
+          args: Prisma.NotificationLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotificationLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>[]
+        }
+        delete: {
+          args: Prisma.NotificationLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+        }
+        update: {
+          args: Prisma.NotificationLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.NotificationLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotificationLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotificationLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.NotificationLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+        }
+        aggregate: {
+          args: Prisma.NotificationLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificationLog>
+        }
+        groupBy: {
+          args: Prisma.NotificationLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotificationLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationLogCountAggregateOutputType> | number
+        }
+      }
+    }
     Settings: {
       payload: Prisma.$SettingsPayload<ExtArgs>
       fields: Prisma.SettingsFieldRefs
@@ -1244,6 +1319,21 @@ export const DocumentScalarFieldEnum = {
 } as const
 
 export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
+
+
+export const NotificationLogScalarFieldEnum = {
+  id: 'id',
+  unidadId: 'unidadId',
+  stepName: 'stepName',
+  clientName: 'clientName',
+  clientEmail: 'clientEmail',
+  sentByName: 'sentByName',
+  subject: 'subject',
+  body: 'body',
+  sentAt: 'sentAt'
+} as const
+
+export type NotificationLogScalarFieldEnum = (typeof NotificationLogScalarFieldEnum)[keyof typeof NotificationLogScalarFieldEnum]
 
 
 export const SettingsScalarFieldEnum = {
@@ -1506,6 +1596,7 @@ export type GlobalOmitConfig = {
   unidad?: Prisma.UnidadOmit
   unitStep?: Prisma.UnitStepOmit
   document?: Prisma.DocumentOmit
+  notificationLog?: Prisma.NotificationLogOmit
   settings?: Prisma.SettingsOmit
 }
 

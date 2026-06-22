@@ -59,6 +59,7 @@ export const ModelName = {
   Unidad: 'Unidad',
   UnitStep: 'UnitStep',
   Document: 'Document',
+  NotificationLog: 'NotificationLog',
   Settings: 'Settings'
 } as const
 
@@ -205,6 +206,21 @@ export const DocumentScalarFieldEnum = {
 } as const
 
 export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
+
+
+export const NotificationLogScalarFieldEnum = {
+  id: 'id',
+  unidadId: 'unidadId',
+  stepName: 'stepName',
+  clientName: 'clientName',
+  clientEmail: 'clientEmail',
+  sentByName: 'sentByName',
+  subject: 'subject',
+  body: 'body',
+  sentAt: 'sentAt'
+} as const
+
+export type NotificationLogScalarFieldEnum = (typeof NotificationLogScalarFieldEnum)[keyof typeof NotificationLogScalarFieldEnum]
 
 
 export const SettingsScalarFieldEnum = {
