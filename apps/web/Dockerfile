@@ -28,9 +28,10 @@ RUN npm install -g prisma@7.8.0 && \
     mkdir -p /app/node_modules && \
     ln -s /usr/local/lib/node_modules/prisma /app/node_modules/prisma
 
-RUN mkdir -p ./uploads && chown nextjs:nodejs ./uploads
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
-RUN printf '#!/bin/sh\nset -e\nprisma migrate deploy --schema=prisma/schema.prisma\nexec node server.js\n' > /app/start.sh && chmod +x /app/start.sh
+RUN mkdir -p ./uploads && chown nextjs:nodejs ./uploads
 
 USER nextjs
 
