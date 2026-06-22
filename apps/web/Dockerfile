@@ -23,14 +23,12 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
-COPY --from=builder /app/node_modules/prisma/build/prisma_schema_build_bg.wasm ./node_modules/.bin/prisma_schema_build_bg.wasm
+
+RUN npm install -g prisma@7.8.0
 
 RUN mkdir -p ./uploads && chown nextjs:nodejs ./uploads
 
-RUN printf '#!/bin/sh\nset -e\nnpx prisma migrate deploy --schema=prisma/schema.prisma\nexec node server.js\n' > /app/start.sh && chmod +x /app/start.sh
+RUN printf '#!/bin/sh\nset -e\nprisma migrate deploy --schema=prisma/schema.prisma\nexec node server.js\n' > /app/start.sh && chmod +x /app/start.sh
 
 USER nextjs
 
