@@ -32,4 +32,20 @@ ENDSQL
   fi
 fi
 
+# Verify the projects table actually exists. If migrations were previously
+# marked as applied without running (P3005 baseline on an empty DB), the
+# table will be missing even though migrate deploy exited 0.
+echo "Verifying database tables..."
+prisma db execute --schema=prisma/schema.prisma --stdin > /tmp/verify.log 2>&1 <<'ENDSQL'
+SELECT 1 FROM "projects" LIMIT 0;
+ENDSQL
+
+if [ $? -ne 0 ]; then
+  echo "Tables missing despite migrations marked as applied. Resetting migration state..."
+  prisma db execute --schema=prisma/schema.prisma --stdin <<'ENDSQL' || true
+TRUNCATE TABLE "_prisma_migrations";
+ENDSQL
+  prisma migrate deploy --schema=prisma/schema.prisma || exit 1
+fi
+
 exec node server.js
