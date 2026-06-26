@@ -35,10 +35,6 @@ export async function GET(
     return NextResponse.json({ error: "Cliente no encontrado" }, { status: 404 });
   }
 
-  if (session.role === "EXECUTIVE" && client.executiveId !== session.userId) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-  }
-
   return NextResponse.json(client);
 }
 

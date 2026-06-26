@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { formatRut } from "@/lib/rut";
-import Badge from "@/components/ui/Badge";
 
 interface Client {
   id: string;
@@ -105,10 +104,13 @@ export default function ClientesPage() {
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
                       {c.projects.length === 0 ? (
-                        <span className="text-slate-400">—</span>
+                        <span className="text-slate-400 text-xs">—</span>
                       ) : (
                         c.projects.slice(0, 2).map((p) => (
-                          <Badge key={p.id} color={p.status.color} label={p.status.name} />
+                          <span key={p.id} className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-600 rounded px-1.5 py-0.5">
+                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: p.status.color }} />
+                            {p.name}
+                          </span>
                         ))
                       )}
                       {c.projects.length > 2 && (
