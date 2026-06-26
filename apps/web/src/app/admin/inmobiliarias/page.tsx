@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 
 type DeliveryStatus = "VERDE" | "EN_BLANCO" | "ENTREGA_INMEDIATA";
 
+interface ProjectStatus {
+  id: string;
+  name: string;
+  color: string;
+  order: number;
+}
+
 const DELIVERY_STATUS_OPTIONS: { value: DeliveryStatus; label: string; color: string }[] = [
   { value: "VERDE", label: "Verde", color: "#22c55e" },
   { value: "EN_BLANCO", label: "En blanco", color: "#94a3b8" },
@@ -29,6 +36,7 @@ interface Proyecto {
   address: string | null;
   deliveryStatus: DeliveryStatus | null;
   deliveryDate: string | null;
+  defaultStatusId: string | null;
   _count: { unidades: number };
 }
 
@@ -291,9 +299,17 @@ function ProyectoModal({
     address: initial?.address ?? "",
     deliveryStatus: initial?.deliveryStatus ?? ("" as DeliveryStatus | ""),
     deliveryDate: initial?.deliveryDate ? new Date(initial.deliveryDate).toISOString().split("T")[0] : "",
+    defaultStatusId: initial?.defaultStatusId ?? "",
   });
+  const [statuses, setStatuses] = useState<ProjectStatus[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/statuses")
+      .then((r) => r.json())
+      .then((data) => setStatuses(Array.isArray(data) ? data : []));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -308,6 +324,7 @@ function ProyectoModal({
         address: form.address || null,
         deliveryStatus: form.deliveryStatus || null,
         deliveryDate: form.deliveryDate || null,
+        defaultStatusId: form.defaultStatusId || null,
       };
       const res = await fetch(url, {
         method,
@@ -417,6 +434,22 @@ function ProyectoModal({
                 onChange={(e) => setForm((f) => ({ ...f, deliveryDate: e.target.value }))}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
               />
+            </div>
+          )}
+          {statuses.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Estado inicial de unidades</label>
+              <select
+                value={form.defaultStatusId}
+                onChange={(e) => setForm((f) => ({ ...f, defaultStatusId: e.target.value }))}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white"
+              >
+                <option value="">Sin estado predeterminado</option>
+                {statuses.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+              <p className="text-xs text-slate-400 mt-1">Se asignará automáticamente al agregar una unidad de este proyecto.</p>
             </div>
           )}
           {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}

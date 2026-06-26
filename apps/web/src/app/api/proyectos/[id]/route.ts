@@ -12,7 +12,7 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const { name, type, address, deliveryStatus, deliveryDate, description } = await req.json();
+  const { name, type, address, deliveryStatus, deliveryDate, description, defaultStatusId } = await req.json();
 
   const updated = await prisma.proyecto.update({
     where: { id },
@@ -30,6 +30,7 @@ export async function PATCH(
             : null
           : undefined,
       description: description !== undefined ? description : undefined,
+      defaultStatusId: defaultStatusId !== undefined ? (defaultStatusId || null) : undefined,
     },
     include: { inmobiliaria: { select: { id: true, name: true } } },
   });

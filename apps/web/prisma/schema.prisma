@@ -68,29 +68,32 @@ model Inmobiliaria {
 }
 
 model Proyecto {
-  id             String         @id @default(cuid())
-  inmobiliariaId String
-  inmobiliaria   Inmobiliaria   @relation(fields: [inmobiliariaId], references: [id], onDelete: Cascade)
-  name           String
-  type           String         @default("Departamento")
-  address        String?
-  deliveryStatus DeliveryStatus?
-  deliveryDate   DateTime?
-  description    String?
-  unidades       Unidad[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id              String          @id @default(cuid())
+  inmobiliariaId  String
+  inmobiliaria    Inmobiliaria    @relation(fields: [inmobiliariaId], references: [id], onDelete: Cascade)
+  name            String
+  type            String          @default("Departamento")
+  address         String?
+  deliveryStatus  DeliveryStatus?
+  deliveryDate    DateTime?
+  description     String?
+  defaultStatusId String?
+  defaultStatus   ProjectStatus?  @relation(fields: [defaultStatusId], references: [id], onDelete: SetNull)
+  unidades        Unidad[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 model ProjectStatus {
-  id        String   @id @default(cuid())
-  name      String
-  color     String   @default("#94a3b8")
-  order     Int      @default(0)
-  isDefault Boolean  @default(false)
-  projects  Unidad[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String     @id @default(cuid())
+  name            String
+  color           String     @default("#94a3b8")
+  order           Int        @default(0)
+  isDefault       Boolean    @default(false)
+  projects        Unidad[]
+  proyectoDefault Proyecto[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 }
 
 model Unidad {

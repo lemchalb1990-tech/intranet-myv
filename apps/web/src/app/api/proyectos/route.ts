@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { inmobiliariaId, name, type, address, deliveryStatus, deliveryDate, description } = body;
+  const { inmobiliariaId, name, type, address, deliveryStatus, deliveryDate, description, defaultStatusId } = body;
 
   if (!inmobiliariaId || !name) {
     return NextResponse.json({ error: "Inmobiliaria y nombre son requeridos" }, { status: 400 });
@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
       deliveryStatus: deliveryStatus ?? null,
       deliveryDate: resolvedDeliveryDate,
       description: description ?? null,
+      defaultStatusId: defaultStatusId ?? null,
     },
     include: { inmobiliaria: { select: { id: true, name: true } } },
   });

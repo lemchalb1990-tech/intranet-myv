@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
       const proy = await prisma.proyecto.findUnique({ where: { id: proyectoId } });
       if (!resolvedName) resolvedName = proy?.name ?? "Sin nombre";
       if (proy?.deliveryDate) resolvedDeliveryDate = proy.deliveryDate;
+      if (!resolvedStatusId && proy?.defaultStatusId) resolvedStatusId = proy.defaultStatusId;
     }
 
     if (!resolvedStatusId) {

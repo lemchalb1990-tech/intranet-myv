@@ -31,6 +31,15 @@ export default function PortalPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("");
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  function toggleSteps(id: string) {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
 
   useEffect(() => {
     Promise.all([
@@ -110,44 +119,57 @@ export default function PortalPage() {
                 )}
               </div>
 
-              {/* Steps */}
+              {/* Steps toggle */}
               {p.steps.length > 0 && (
-                <div className="border-t border-slate-100 px-5 py-4">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">Seguimiento</p>
-                  <ol className="space-y-0">
-                    {p.steps.map((step, idx) => {
-                      const completed = !!step.completedAt;
-                      const isLast = idx === p.steps.length - 1;
-                      return (
-                        <li key={step.id} className="flex gap-3">
-                          {/* Timeline line + dot */}
-                          <div className="flex flex-col items-center">
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${completed ? "bg-slate-700 border-slate-700" : "bg-white border-slate-300"}`}>
-                              {completed && (
-                                <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                              )}
-                            </div>
-                            {!isLast && (
-                              <div className={`w-px flex-1 my-1 ${completed ? "bg-slate-300" : "bg-slate-200"}`} style={{ minHeight: "16px" }} />
-                            )}
-                          </div>
-                          {/* Content */}
-                          <div className={`pb-4 ${isLast ? "pb-0" : ""}`}>
-                            <p className={`text-sm font-medium ${completed ? "text-slate-800" : "text-slate-400"}`}>
-                              {step.name}
-                            </p>
-                            {completed && step.completedAt && (
-                              <p className="text-xs text-slate-400 mt-0.5">
-                                {format(new Date(step.completedAt), "d 'de' MMMM 'de' yyyy", { locale: es })}
-                              </p>
-                            )}
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ol>
+                <div className="border-t border-slate-100">
+                  <button
+                    onClick={() => toggleSteps(p.id)}
+                    className="w-full flex items-center justify-between px-5 py-3 text-sm text-slate-500 hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="font-medium">Ver detalle de seguimiento</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform ${expandedIds.has(p.id) ? "rotate-180" : ""}`}
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {expandedIds.has(p.id) && (
+                    <div className="px-5 pb-4">
+                      <ol className="space-y-0">
+                        {p.steps.map((step, idx) => {
+                          const completed = !!step.completedAt;
+                          const isLast = idx === p.steps.length - 1;
+                          return (
+                            <li key={step.id} className="flex gap-3">
+                              <div className="flex flex-col items-center">
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${completed ? "bg-slate-700 border-slate-700" : "bg-white border-slate-300"}`}>
+                                  {completed && (
+                                    <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </div>
+                                {!isLast && (
+                                  <div className={`w-px flex-1 my-1 ${completed ? "bg-slate-300" : "bg-slate-200"}`} style={{ minHeight: "16px" }} />
+                                )}
+                              </div>
+                              <div className={`pb-4 ${isLast ? "pb-0" : ""}`}>
+                                <p className={`text-sm font-medium ${completed ? "text-slate-800" : "text-slate-400"}`}>
+                                  {step.name}
+                                </p>
+                                {completed && step.completedAt && (
+                                  <p className="text-xs text-slate-400 mt-0.5">
+                                    {format(new Date(step.completedAt), "d 'de' MMMM 'de' yyyy", { locale: es })}
+                                  </p>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
