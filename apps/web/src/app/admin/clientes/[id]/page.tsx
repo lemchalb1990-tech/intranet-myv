@@ -507,17 +507,24 @@ function NewProjectModal({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="px-5 py-4 space-y-3">
-          {proyectos.length > 0 && (
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Proyecto (Inmobiliaria)</label>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Proyecto (Inmobiliaria)</label>
+            {proyectos.length === 0 ? (
+              <p className="text-xs text-slate-400 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+                No hay proyectos registrados.{" "}
+                <a href="/admin/inmobiliarias" className="text-slate-600 underline hover:text-slate-800">
+                  Crear en Inmobiliarias →
+                </a>
+              </p>
+            ) : (
               <select value={form.proyectoId} onChange={(e) => setForm((f) => ({ ...f, proyectoId: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white">
                 <option value="">Sin proyecto asignado</option>
                 {proyectos.map((p) => (
                   <option key={p.id} value={p.id}>{p.inmobiliaria.name} · {p.name}</option>
                 ))}
               </select>
-            </div>
-          )}
+            )}
+          </div>
           {!form.proyectoId && (
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
