@@ -16,7 +16,14 @@ export async function GET(req: NextRequest) {
 
     const projects = await prisma.unidad.findMany({
       where: { clientId: client.id },
-      include: { status: true, proyecto: { include: { inmobiliaria: true } } },
+      include: {
+        status: true,
+        proyecto: { include: { inmobiliaria: true } },
+        steps: {
+          orderBy: { order: "asc" },
+          select: { id: true, name: true, order: true, completedAt: true },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(projects);
