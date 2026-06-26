@@ -54,17 +54,30 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, type, clientId, statusId, deliveryDate, notes, proyectoId, unitNumber, hasStorage, storageNumber, hasParking, parkingNumber } = body;
 
-    if ((!name && !proyectoId) || !clientId || !statusId) {
+    if ((!name && !proyectoId) || !clientId) {
       return NextResponse.json(
-        { error: "Proyecto o nombre, cliente y estado son requeridos" },
+        { error: "Proyecto o nombre y cliente son requeridos" },
         { status: 400 }
       );
     }
 
     let resolvedName = name;
-    if (!resolvedName && proyectoId) {
+    let resolvedStatusId = statusId;
+    let resolvedDeliveryDate = deliveryDate ? new Date(deliveryDate) : null;
+
+    if (proyectoId) {
       const proy = await prisma.proyecto.findUnique({ where: { id: proyectoId } });
-      resolvedName = proy?.name ?? "Sin nombre";
+      if (!resolvedName) resolvedName = proy?.name ?? "Sin nombre";
+      if (proy?.deliveryDate) resolvedDeliveryDate = proy.deliveryDate;
+    }
+
+    if (!resolvedStatusId) {
+      const defaultStatus = await prisma.projectStatus.findFirst({ where: { isDefault: true } })
+        ?? await prisma.projectStatus.findFirst({ orderBy: { order: "asc" } });
+      if (!defaultStatus) {
+        return NextResponse.json({ error: "No hay estados configurados" }, { status: 400 });
+      }
+      resolvedStatusId = defaultStatus.id;
     }
 
     const project = await prisma.unidad.create({
@@ -72,14 +85,14 @@ export async function POST(req: NextRequest) {
         name: resolvedName,
         type: type ?? "Departamento",
         clientId,
-        statusId,
+        statusId: resolvedStatusId,
         proyectoId: proyectoId ?? null,
         unitNumber: unitNumber ?? null,
         hasStorage: hasStorage ?? false,
         storageNumber: storageNumber ?? null,
         hasParking: hasParking ?? false,
         parkingNumber: parkingNumber ?? null,
-        deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+        deliveryDate: resolvedDeliveryDate,
         notes: notes ?? null,
       },
       include: { status: true, proyecto: { include: { inmobiliaria: true } }, client: { include: { user: true } } },
