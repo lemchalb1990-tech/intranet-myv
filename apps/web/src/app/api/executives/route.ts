@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { validateRut, normalizeRut, getDefaultPassword } from "@/lib/rut";
 
 export async function GET() {
   const session = await getSession();
@@ -15,7 +14,6 @@ export async function GET() {
       id: true,
       name: true,
       email: true,
-      rut: true,
       isActive: true,
       createdAt: true,
       _count: { select: { assignedClients: true } },
@@ -34,25 +32,26 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, rut, email } = body;
+    const { name, email, password } = body;
 
-    if (!name || !rut || !email) {
+    if (!name || !email || !password) {
       return NextResponse.json(
-        { error: "Nombre, RUT y email son requeridos" },
+        { error: "Nombre, email y contraseña son requeridos" },
         { status: 400 }
       );
     }
 
-    if (!validateRut(rut)) {
-      return NextResponse.json({ error: "RUT inválido" }, { status: 400 });
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: "La contraseña debe tener al menos 6 caracteres" },
+        { status: 400 }
+      );
     }
 
-    const normalized = normalizeRut(rut);
-    const defaultPassword = getDefaultPassword(normalized);
-    const hashed = await hashPassword(defaultPassword);
+    const hashed = await hashPassword(password);
 
     const user = await prisma.user.create({
-      data: { rut: normalized, name, email, password: hashed, role: "EXECUTIVE" },
+      data: { name, email: email.trim().toLowerCase(), password: hashed, role: "EXECUTIVE" },
     });
 
     return NextResponse.json(user, { status: 201 });
@@ -60,7 +59,7 @@ export async function POST(req: NextRequest) {
     const e = error as { code?: string };
     if (e.code === "P2002") {
       return NextResponse.json(
-        { error: "Ya existe un usuario con ese RUT o email" },
+        { error: "Ya existe un usuario con ese email" },
         { status: 409 }
       );
     }

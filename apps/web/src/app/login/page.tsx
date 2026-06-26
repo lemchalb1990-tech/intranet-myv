@@ -6,7 +6,7 @@ import { formatRut, validateRut } from "@/lib/rut";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [rut, setRut] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,10 +34,15 @@ export default function LoginPage() {
       .catch(() => {});
   }, [router]);
 
-  function handleRutChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const raw = e.target.value.replace(/[^0-9kK]/g, "");
-    if (raw.length <= 9) {
-      setRut(raw.length > 1 ? formatRut(raw) : raw);
+  function handleIdentifierChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    if (value.includes("@")) {
+      setIdentifier(value);
+    } else {
+      const raw = value.replace(/[^0-9kK]/g, "");
+      if (raw.length <= 9) {
+        setIdentifier(raw.length > 1 ? formatRut(raw) : raw);
+      }
     }
   }
 
@@ -45,7 +50,8 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    if (!validateRut(rut)) {
+    const isEmail = identifier.includes("@");
+    if (!isEmail && !validateRut(identifier)) {
       setError("El RUT ingresado no es válido.");
       return;
     }
@@ -55,7 +61,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rut, password }),
+        body: JSON.stringify({ identifier, password }),
       });
 
       const data = await res.json();
@@ -99,15 +105,15 @@ export default function LoginPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-700" htmlFor="rut">
-                RUT
+              <label className="text-sm font-medium text-slate-700" htmlFor="identifier">
+                RUT o Email
               </label>
               <input
-                id="rut"
+                id="identifier"
                 type="text"
-                placeholder="12.345.678-9"
-                value={rut}
-                onChange={handleRutChange}
+                placeholder="12.345.678-9 o correo@ejemplo.com"
+                value={identifier}
+                onChange={handleIdentifierChange}
                 autoComplete="username"
                 className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition bg-white"
                 required
@@ -128,9 +134,6 @@ export default function LoginPage() {
                 className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition bg-white"
                 required
               />
-              <p className="text-xs text-slate-400 mt-0.5">
-                Tu contraseña son los últimos 6 dígitos de tu RUT (sin dígito verificador)
-              </p>
             </div>
 
             {error && (
