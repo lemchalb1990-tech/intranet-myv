@@ -39,18 +39,18 @@ CREATE TABLE "UnitStep" (
     CONSTRAINT "UnitStep_pkey" PRIMARY KEY ("id")
 );
 
--- AlterTable projects (Unidad)
+-- AlterTable projects (Unidad) — IF NOT EXISTS: initial migration may have created these already
 ALTER TABLE "projects"
-    ADD COLUMN "proyectoId" TEXT,
-    ADD COLUMN "unitNumber" TEXT,
-    ADD COLUMN "hasStorage" BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN "storageNumber" TEXT,
-    ADD COLUMN "hasParking" BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN "parkingNumber" TEXT;
+    ADD COLUMN IF NOT EXISTS "proyectoId"    TEXT,
+    ADD COLUMN IF NOT EXISTS "unitNumber"    TEXT,
+    ADD COLUMN IF NOT EXISTS "hasStorage"    BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN IF NOT EXISTS "storageNumber" TEXT,
+    ADD COLUMN IF NOT EXISTS "hasParking"    BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN IF NOT EXISTS "parkingNumber" TEXT;
 
 -- AlterTable Document
 ALTER TABLE "Document"
-    ADD COLUMN "stepId" TEXT;
+    ADD COLUMN IF NOT EXISTS "stepId" TEXT;
 
 -- AddForeignKey Proyecto -> Inmobiliaria
 ALTER TABLE "Proyecto" ADD CONSTRAINT "Proyecto_inmobiliariaId_fkey"

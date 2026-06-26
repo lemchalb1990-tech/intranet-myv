@@ -59,17 +59,23 @@ CREATE TABLE IF NOT EXISTS "ProjectStatus" (
   CONSTRAINT "ProjectStatus_pkey" PRIMARY KEY ("id")
 );
 
--- projects (Unidad model) — columns from incremental migrations are added later
+-- projects (Unidad model) — all columns included so marked-applied incremental migrations don't leave gaps
 CREATE TABLE IF NOT EXISTS "projects" (
-  "id"           TEXT NOT NULL,
-  "clientId"     TEXT NOT NULL,
-  "name"         TEXT NOT NULL,
-  "type"         TEXT NOT NULL DEFAULT 'Departamento',
-  "statusId"     TEXT NOT NULL,
-  "deliveryDate" TIMESTAMP(3),
-  "notes"        TEXT,
-  "createdAt"    TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updatedAt"    TIMESTAMP(3) NOT NULL,
+  "id"            TEXT NOT NULL,
+  "clientId"      TEXT NOT NULL,
+  "proyectoId"    TEXT,
+  "unitNumber"    TEXT,
+  "hasStorage"    BOOLEAN NOT NULL DEFAULT false,
+  "storageNumber" TEXT,
+  "hasParking"    BOOLEAN NOT NULL DEFAULT false,
+  "parkingNumber" TEXT,
+  "name"          TEXT NOT NULL,
+  "type"          TEXT NOT NULL DEFAULT 'Departamento',
+  "statusId"      TEXT NOT NULL,
+  "deliveryDate"  TIMESTAMP(3),
+  "notes"         TEXT,
+  "createdAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt"     TIMESTAMP(3) NOT NULL,
   CONSTRAINT "projects_pkey" PRIMARY KEY ("id")
 );
 
