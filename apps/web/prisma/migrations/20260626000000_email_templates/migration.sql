@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS "EmailTemplate" (
+  "id"        TEXT NOT NULL,
+  "name"      TEXT NOT NULL,
+  "subject"   TEXT NOT NULL,
+  "body"      TEXT NOT NULL DEFAULT '',
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "EmailTemplate_pkey" PRIMARY KEY ("id")
+);

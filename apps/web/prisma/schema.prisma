@@ -178,6 +178,15 @@ model NotificationLog {
   sentAt      DateTime @default(now())
 }
 
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  name      String
+  subject   String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Settings {
   id             String   @id @default(cuid())
   platformName   String   @default("Intranet MYV")
