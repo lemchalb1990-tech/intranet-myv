@@ -74,7 +74,7 @@ function RichEditor({
   // Sync content when `value` changes externally (e.g., opening another template)
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value, false);
+      editor.commands.setContent(value);
     }
   }, [value, editor]);
 
