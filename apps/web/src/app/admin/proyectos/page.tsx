@@ -51,8 +51,8 @@ export default function ProyectosPage() {
     <div className="max-w-5xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-800">Proyectos</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{filtered.length} proyecto(s)</p>
+          <h1 className="text-xl font-semibold text-slate-800">Unidades</h1>
+          <p className="text-sm text-slate-500 mt-0.5">{filtered.length} unidad(es)</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export default function ProyectosPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-slate-400 text-sm">
-            Sin proyectos
+            Sin unidades
           </div>
         ) : (
           <table className="w-full text-sm">

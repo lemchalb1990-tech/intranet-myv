@@ -26,9 +26,10 @@ async function main() {
 
   await prisma.projectStatus.createMany({
     data: [
-      { name: "En Blanco", color: "#94a3b8", order: 0 },
-      { name: "En Verde", color: "#86efac", order: 1 },
-      { name: "Entrega Inmediata", color: "#fcd34d", order: 2 },
+      { name: "Inicial",      color: "#94a3b8", order: 0, isDefault: true },
+      { name: "En proceso",   color: "#3b82f6", order: 1 },
+      { name: "Post Entrega", color: "#f59e0b", order: 2 },
+      { name: "Entregado",    color: "#22c55e", order: 3 },
     ],
   });
 
