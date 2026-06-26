@@ -408,15 +408,17 @@ function ProyectoModal({
               )}
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Fecha aproximada de entrega</label>
-            <input
-              type="date"
-              value={form.deliveryDate}
-              onChange={(e) => setForm((f) => ({ ...f, deliveryDate: e.target.value }))}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
-            />
-          </div>
+          {form.deliveryStatus !== "ENTREGA_INMEDIATA" && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Fecha aproximada de entrega</label>
+              <input
+                type="date"
+                value={form.deliveryDate}
+                onChange={(e) => setForm((f) => ({ ...f, deliveryDate: e.target.value }))}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+              />
+            </div>
+          )}
           {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
           <div className="flex gap-2 pt-1">
             <button type="button" onClick={onClose} className="flex-1 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">Cancelar</button>

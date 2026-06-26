@@ -21,7 +21,14 @@ export async function PATCH(
       type: type ?? undefined,
       address: address !== undefined ? address : undefined,
       deliveryStatus: deliveryStatus !== undefined ? (deliveryStatus || null) : undefined,
-      deliveryDate: deliveryDate !== undefined ? (deliveryDate ? new Date(deliveryDate) : null) : undefined,
+      deliveryDate:
+        deliveryStatus === "ENTREGA_INMEDIATA"
+          ? new Date()
+          : deliveryDate !== undefined
+          ? deliveryDate
+            ? new Date(deliveryDate)
+            : null
+          : undefined,
       description: description !== undefined ? description : undefined,
     },
     include: { inmobiliaria: { select: { id: true, name: true } } },

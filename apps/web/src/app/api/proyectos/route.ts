@@ -36,6 +36,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Inmobiliaria y nombre son requeridos" }, { status: 400 });
   }
 
+  const resolvedDeliveryDate =
+    deliveryStatus === "ENTREGA_INMEDIATA"
+      ? new Date()
+      : deliveryDate
+      ? new Date(deliveryDate)
+      : null;
+
   const proyecto = await prisma.proyecto.create({
     data: {
       inmobiliariaId,
@@ -43,7 +50,7 @@ export async function POST(req: NextRequest) {
       type: type ?? "Departamento",
       address: address ?? null,
       deliveryStatus: deliveryStatus ?? null,
-      deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+      deliveryDate: resolvedDeliveryDate,
       description: description ?? null,
     },
     include: { inmobiliaria: { select: { id: true, name: true } } },
