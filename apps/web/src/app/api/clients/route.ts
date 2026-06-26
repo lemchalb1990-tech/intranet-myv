@@ -17,9 +17,7 @@ export async function GET(req: NextRequest) {
 
   const where: Record<string, unknown> = {};
 
-  if (session.role === "EXECUTIVE") {
-    where.executiveId = session.userId;
-  } else if (executiveId) {
+  if (executiveId) {
     where.executiveId = executiveId;
   }
 

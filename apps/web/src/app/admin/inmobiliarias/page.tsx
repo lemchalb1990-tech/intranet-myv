@@ -54,6 +54,7 @@ export default function InmobiliariasPage() {
   const [editInm, setEditInm] = useState<Inmobiliaria | null>(null);
   const [showProyModal, setShowProyModal] = useState(false);
   const [editProy, setEditProy] = useState<Proyecto | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   function load() {
     setLoading(true);
@@ -63,7 +64,10 @@ export default function InmobiliariasPage() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    fetch("/api/auth/me").then((r) => r.json()).then((u) => setIsAdmin(u.role === "SUPER_ADMIN"));
+    load();
+  }, []);
 
   async function handleDeleteInm(id: string) {
     if (!confirm("¿Eliminar esta inmobiliaria y todos sus proyectos?")) return;
@@ -84,26 +88,28 @@ export default function InmobiliariasPage() {
           <h1 className="text-xl font-semibold text-slate-800">Inmobiliarias</h1>
           <p className="text-sm text-slate-500 mt-0.5">{inmobiliarias.length} inmobiliaria(s)</p>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => { setEditProy(null); setShowProyModal(true); }}
-            className="flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-50 transition"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Nuevo proyecto
-          </button>
-          <button
-            onClick={() => { setEditInm(null); setShowInmModal(true); }}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-700 transition"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Nueva inmobiliaria
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => { setEditProy(null); setShowProyModal(true); }}
+              className="flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-50 transition"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Nuevo proyecto
+            </button>
+            <button
+              onClick={() => { setEditInm(null); setShowInmModal(true); }}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-700 transition"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Nueva inmobiliaria
+            </button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -123,20 +129,22 @@ export default function InmobiliariasPage() {
                   <p className="font-semibold text-slate-800">{inm.name}</p>
                   <p className="text-xs text-slate-400 mt-0.5">{inm._count.proyectos} proyecto(s)</p>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => { setEditInm(inm); setShowInmModal(true); }}
-                    className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDeleteInm(inm.id)}
-                    className="text-xs px-3 py-1.5 border border-red-200 rounded-lg text-red-500 hover:bg-red-50 transition"
-                  >
-                    Eliminar
-                  </button>
-                </div>
+                {isAdmin && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => { setEditInm(inm); setShowInmModal(true); }}
+                      className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteInm(inm.id)}
+                      className="text-xs px-3 py-1.5 border border-red-200 rounded-lg text-red-500 hover:bg-red-50 transition"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                )}
               </div>
 
               {inm.proyectos.length === 0 ? (
@@ -164,20 +172,22 @@ export default function InmobiliariasPage() {
                         </td>
                         <td className="px-5 py-3 text-slate-500">{p._count.unidades}</td>
                         <td className="px-5 py-3">
-                          <div className="flex gap-2 justify-end">
-                            <button
-                              onClick={() => setEditProy(p)}
-                              className="text-xs text-slate-500 hover:text-slate-700"
-                            >
-                              Editar
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProy(p.id)}
-                              className="text-xs text-red-400 hover:text-red-600"
-                            >
-                              Eliminar
-                            </button>
-                          </div>
+                          {isAdmin && (
+                            <div className="flex gap-2 justify-end">
+                              <button
+                                onClick={() => setEditProy(p)}
+                                className="text-xs text-slate-500 hover:text-slate-700"
+                              >
+                                Editar
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProy(p.id)}
+                                className="text-xs text-red-400 hover:text-red-600"
+                              >
+                                Eliminar
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
